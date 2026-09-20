@@ -3,13 +3,13 @@
     <div class="flex flex-1">
 
         {{-- LEFT BRANDING PANEL --}}
-        <div class="hidden md:flex md:w-[65%] relative overflow-hidden select-none">
+        <div class="hidden md:flex md:w-1/2 relative overflow-hidden">
 
             {{-- BACKDROP IMAGE --}}
             <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{ asset('images/background.png') }}')"></div>
 
             {{-- DARK OVERLAY --}}
-            <div class="absolute inset-0 bg-brand-black/50"></div>
+            <div class="absolute inset-0 bg-brand-black/85"></div>
 
             {{-- CONTENT --}}
             <div class="relative z-10 flex flex-col justify-between p-12 text-neutral-0 w-full">
@@ -26,10 +26,10 @@
 
                 {{-- LOGO + TAGLINE --}}
                 <div class="flex flex-col items-center">
-                    <img src="{{ asset('images/logo.png') }}" alt="Four Stripes Logo" class="h-120 -mb-10" draggable="false">
+                    <img src="{{ asset('images/logo.png') }}" alt="Four Stripes Logo" class="h-56 mb-6">
                     <p class="text-center text-neutral-300 tracking-wide font-heading font-semibold">
                         CACAO MACHINES<br>
-                        BETTER POSSIBILITIES
+                        BETTER POSSIBILITIES.
                     </p>
                 </div>
 
@@ -57,20 +57,19 @@
         </div>
 
         {{-- RIGHT LOGIN FORM PANEL --}}
-        <div class="w-full md:w-[35%] flex items-center justify-center bg-neutral-0 p-8">
+        <div class="w-full md:w-1/2 flex items-center justify-center bg-neutral-0 p-8">
             <div class="w-full max-w-md">
 
                 {{-- HEADER --}}
-                <p class="text-xs tracking-widest text-neutral-600 font-heading mb-2 select-none">WELCOME TO</p>
-                <h1 class="text-3xl font-heading font-extrabold text-neutral-900 select-none">FOUR STRIPES</h1>
-                <p class="text-xs tracking-widest text-brand-yellow-deep font-heading font-semibold mt-1 select-none">
+                <p class="text-xs tracking-widest text-neutral-600 font-heading mb-2">WELCOME TO</p>
+                <h1 class="text-3xl font-heading font-extrabold text-neutral-900">FOUR STRIPES</h1>
+                <p class="text-xs tracking-widest text-brand-yellow-deep font-heading font-semibold mt-1">
                     EQUIPMENT AND MACHINES CORP.
                 </p>
                 <div class="w-10 h-1 bg-brand-yellow mt-3 mb-4"></div>
 
-                <p class="text-sm text-neutral-600 mb-6 select-none">
-                    Manage sales, inventory, and operations. 
-                    <br>Access your terminal below.
+                <p class="text-sm text-neutral-600 mb-6">
+                    Manage sales, inventory, and operations for a stronger, more sustainable cacao industry. Access your terminal below.
                 </p>
 
                 {{-- LOGIN FORM --}}
@@ -103,7 +102,7 @@
                     </div>
 
                     {{-- LOGIN BUTTON --}}
-                    <x-button type="submit">
+                    <x-button type="submit" class="w-full">
                         Login &rarr;
                     </x-button>
 

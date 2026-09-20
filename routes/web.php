@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\InventoryController;
 
 // ROOT REDIRECT
 Route::get('/', function () {
@@ -26,9 +27,11 @@ Route::middleware('auth')->group(function () {
     })->name('pos.index');
 
     // INVENTORY
-    Route::get('/inventory', function () {
-        return 'Inventory page coming soon';
-    })->name('inventory.index');
+    Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
+    Route::get('/inventory/create', [InventoryController::class, 'create'])->name('inventory.create');
+    Route::post('/inventory', [InventoryController::class, 'store'])->name('inventory.store');
+    Route::get('/inventory/{product}/edit', [InventoryController::class, 'edit'])->name('inventory.edit');
+    Route::put('/inventory/{product}', [InventoryController::class, 'update'])->name('inventory.update');
 
     // SALES TRACKING
     Route::get('/sales', function () {

@@ -1,4 +1,4 @@
-@props(['label' => null, 'name', 'type' => 'text', 'placeholder' => null])
+@props(['label' => null, 'name', 'type' => 'text', 'placeholder' => null, 'value' => null])
 
 <div>
     {{-- LABEL --}}
@@ -23,7 +23,7 @@
             name="{{ $name }}"
             id="{{ $name }}"
             placeholder="{{ $placeholder }}"
-            value="{{ old($name) }}"
+            value="{{ old($name, $value) }}"
             {{ $attributes->merge(['class' => 'w-full border border-neutral-200 bg-neutral-100 rounded-lg py-3 ' . (isset($icon) ? 'pl-10' : 'pl-4') . ' pr-4 text-sm font-body text-neutral-900 focus:outline-none focus:ring-2 focus:ring-brand-yellow']) }}
         >
 

@@ -23,11 +23,6 @@
             {{ now()->format('M d, Y  h:i A') }}
         </span>
 
-        {{-- NOTIFICATION BELL --}}
-        <button class="text-neutral-700 text-xl relative">
-            &#128276;
-        </button>
-
         {{-- PROFILE --}}
         <div class="flex items-center gap-2">
             <div class="w-9 h-9 rounded-full bg-neutral-200 flex items-center justify-center font-semibold text-neutral-700">
