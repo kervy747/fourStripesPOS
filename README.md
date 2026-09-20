@@ -1,8 +1,12 @@
 # FourStripesPOS
 
+<p align="center">
+  <img src="https://i.imgur.com/PeEdYw7.png" alt="Four Stripes Equipment and Machines Corp. Logo" width="200">
+</p>
+
 A Laravel-based Point of Sale (POS) system built for **Four Stripes Equipment and Machines Corp.**, a seller of cacao machines, tools, and related equipment.
 
-> Cacao Machines
+> Cacao Machines. Better Possibilities.
 
 ## About
 
@@ -13,10 +17,10 @@ FourStripesPOS digitizes the company's manual logbook-based operations (Sales Lo
 | Role | Access |
 |---|---|
 | **Owner/Manager (Admin)** | POS, Inventory, Sales Tracking, Reports, User Management, Audit Log |
-| **Staff 1 (Main Staff)** | POS, Inventory, Sales Tracking |
-| **Staff 2 (Owner's Wife)** | POS, Inventory, Sales Tracking (backup for Staff 1) |
+| **Staff 1 (Main Staff)** | POS, Inventory, Sales Tracking, Reports |
+| **Staff 2 (Owner's Wife)** | POS, Inventory, Sales Tracking, Reports (backup for Staff 1) |
 
-Staff accounts share identical permissions. Reports, User Management, and the Audit Log are Admin-only.
+Admin and Staff share nearly identical access — the only Admin-exclusive tools are **User Management** and the **Audit Log**. Staff can view/export Reports the same as Admin.
 
 ## Core Features
 
@@ -66,13 +70,13 @@ FourStripesPOS/
 │
 ├── app/
 │   ├── Models/
-│   │   ├── User.php                      
-│   │   ├── Product.php                  
-│   │   ├── Sale.php                      
-│   │   ├── SaleItem.php                  
-│   │   ├── Customer.php                  
-│   │   ├── ShippingZone.php              
-│   │   └── AuditLog.php                  
+│   │   ├── User.php
+│   │   ├── Product.php
+│   │   ├── Sale.php
+│   │   ├── SaleItem.php
+│   │   ├── Customer.php
+│   │   ├── ShippingZone.php
+│   │   └── AuditLog.php
 │   │
 │   ├── Http/
 │   │   ├── Controllers/
@@ -81,24 +85,24 @@ FourStripesPOS/
 │   │   │   │
 │   │   │   ├── Admin/
 │   │   │   │   ├── UserManagementController.php
-│   │   │   │   ├── ReportController.php          
 │   │   │   │   └── AuditLogController.php
 │   │   │   │
 │   │   │   ├── Staff/
 │   │   │   │   └── (staff shares controllers below, gated by middleware)
 │   │   │   │
-│   │   │   ├── PosController.php                 
-│   │   │   ├── InventoryController.php           
-│   │   │   ├── SaleController.php                
-│   │   │   └── ReceiptController.php             
+│   │   │   ├── PosController.php
+│   │   │   ├── InventoryController.php
+│   │   │   ├── SaleController.php
+│   │   │   ├── ReportController.php
+│   │   │   └── ReceiptController.php
 │   │   │
 │   │   └── Middleware/
 │   │       ├── IsAdmin.php
-│   │       └── LogsActivity.php                
+│   │       └── LogsActivity.php
 │   │
 │   └── Services/
-│       ├── ShippingCalculator.php               
-│       └── PdfReportGenerator.php              
+│       ├── ShippingCalculator.php
+│       └── PdfReportGenerator.php
 │
 ├── database/
 │   ├── migrations/
@@ -117,16 +121,16 @@ FourStripesPOS/
 ├── resources/
 │   └── views/
 │       ├── components/
-│       │   ├── layout.blade.php                 
-│       │   ├── sidebar.blade.php                
-│       │   ├── page-header.blade.php            
-│       │   ├── button.blade.php                
-│       │   ├── input.blade.php                 
-│       │   ├── error.blade.php                
+│       │   ├── layout.blade.php
+│       │   ├── sidebar.blade.php
+│       │   ├── page-header.blade.php
+│       │   ├── button.blade.php
+│       │   ├── input.blade.php
+│       │   ├── error.blade.php
 │       │   └── ui/
 │       │       ├── table.blade.php
 │       │       ├── modal.blade.php
-│       │       └── status-badge.blade.php    
+│       │       └── status-badge.blade.php
 │       │
 │       ├── auth/
 │       │   └── login.blade.php
@@ -136,33 +140,36 @@ FourStripesPOS/
 │       │   │   ├── index.blade.php
 │       │   │   ├── create.blade.php
 │       │   │   └── edit.blade.php
-│       │   ├── reports/
-│       │   │   └── index.blade.php           
 │       │   └── audit-log/
 │       │       └── index.blade.php
 │       │
+│       ├── reports/
+│       │   └── index.blade.php
+│       │
 │       ├── pos/
-│       │   ├── index.blade.php                
+│       │   ├── index.blade.php
 │       │   └── partials/
 │       │       ├── cart.blade.php
-│       │       └── shipping-fields.blade.php   
+│       │       └── shipping-fields.blade.php
 │       │
 │       ├── inventory/
 │       │   ├── index.blade.php
 │       │   ├── create.blade.php
-│       │   └── edit.blade.php
+│       │   ├── edit.blade.php
+│       │   └── form.blade.php
 │       │
 │       ├── sales/
-│       │   ├── index.blade.php               
-│       │   └── show.blade.php             
+│       │   ├── index.blade.php
+│       │   └── show.blade.php
 │       │
 │       └── receipts/
-│           └── pdf.blade.php                  
+│           └── pdf.blade.php
 │
 ├── routes/
-│   └── web.php                              
+│   └── web.php
 │
 └── public/
+    └── ... (standard Laravel public assets)
 ```
 
 ## Build Order (Planned)
