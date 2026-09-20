@@ -66,13 +66,13 @@ FourStripesPOS/
 │
 ├── app/
 │   ├── Models/
-│   │   ├── User.php                      # staff/admin accounts, has role field
-│   │   ├── Product.php                   # includes weight, price, warranty_type
-│   │   ├── Sale.php                      # unified sales/orders (status: pending/completed)
-│   │   ├── SaleItem.php                  # line items per sale, warranty_expires_at
-│   │   ├── Customer.php                  # name, phone, address
-│   │   ├── ShippingZone.php              # zone name, base rate, weight bracket rules
-│   │   └── AuditLog.php                  # tracks every action, all roles
+│   │   ├── User.php                      
+│   │   ├── Product.php                  
+│   │   ├── Sale.php                      
+│   │   ├── SaleItem.php                  
+│   │   ├── Customer.php                  
+│   │   ├── ShippingZone.php              
+│   │   └── AuditLog.php                  
 │   │
 │   ├── Http/
 │   │   ├── Controllers/
@@ -81,24 +81,24 @@ FourStripesPOS/
 │   │   │   │
 │   │   │   ├── Admin/
 │   │   │   │   ├── UserManagementController.php
-│   │   │   │   ├── ReportController.php          # BIR summary + PDF export
+│   │   │   │   ├── ReportController.php          
 │   │   │   │   └── AuditLogController.php
 │   │   │   │
 │   │   │   ├── Staff/
 │   │   │   │   └── (staff shares controllers below, gated by middleware)
 │   │   │   │
-│   │   │   ├── PosController.php                 # checkout screen, cart, shipping calc
-│   │   │   ├── InventoryController.php           # stock list, quantity updates
-│   │   │   ├── SaleController.php                # sales logbook, pending->completed
-│   │   │   └── ReceiptController.php             # generates per-sale PDF
+│   │   │   ├── PosController.php                 
+│   │   │   ├── InventoryController.php           
+│   │   │   ├── SaleController.php                
+│   │   │   └── ReceiptController.php             
 │   │   │
 │   │   └── Middleware/
 │   │       ├── IsAdmin.php
-│   │       └── LogsActivity.php                  # auto-writes to AuditLog
+│   │       └── LogsActivity.php                
 │   │
 │   └── Services/
-│       ├── ShippingCalculator.php                # zone + weight bracket logic
-│       └── PdfReportGenerator.php                # wraps dompdf calls
+│       ├── ShippingCalculator.php               
+│       └── PdfReportGenerator.php              
 │
 ├── database/
 │   ├── migrations/
@@ -117,16 +117,16 @@ FourStripesPOS/
 ├── resources/
 │   └── views/
 │       ├── components/
-│       │   ├── layout.blade.php                  # <x-layout> — sidebar + slot shell (no navbar)
-│       │   ├── sidebar.blade.php                 # role-aware nav links, brand colors
-│       │   ├── page-header.blade.php             # per-page header (hamburger, title, date/time, profile)
-│       │   ├── button.blade.php                  # <x-button> — reusable button styles
-│       │   ├── input.blade.php                   # <x-input> — textfield with built-in label
-│       │   ├── error.blade.php                   # <x-error> — validation error message
+│       │   ├── layout.blade.php                 
+│       │   ├── sidebar.blade.php                
+│       │   ├── page-header.blade.php            
+│       │   ├── button.blade.php                
+│       │   ├── input.blade.php                 
+│       │   ├── error.blade.php                
 │       │   └── ui/
 │       │       ├── table.blade.php
 │       │       ├── modal.blade.php
-│       │       └── status-badge.blade.php        # pending/completed pill
+│       │       └── status-badge.blade.php    
 │       │
 │       ├── auth/
 │       │   └── login.blade.php
@@ -137,15 +137,15 @@ FourStripesPOS/
 │       │   │   ├── create.blade.php
 │       │   │   └── edit.blade.php
 │       │   ├── reports/
-│       │   │   └── index.blade.php               # date range filter + "Generate PDF"
+│       │   │   └── index.blade.php           
 │       │   └── audit-log/
 │       │       └── index.blade.php
 │       │
 │       ├── pos/
-│       │   ├── index.blade.php                   # main POS/checkout screen
+│       │   ├── index.blade.php                
 │       │   └── partials/
 │       │       ├── cart.blade.php
-│       │       └── shipping-fields.blade.php     # pickup/shipped toggle + address
+│       │       └── shipping-fields.blade.php   
 │       │
 │       ├── inventory/
 │       │   ├── index.blade.php
@@ -153,17 +153,16 @@ FourStripesPOS/
 │       │   └── edit.blade.php
 │       │
 │       ├── sales/
-│       │   ├── index.blade.php                   # Sales Logbook (filter: pending/completed)
-│       │   └── show.blade.php                    # single transaction detail
+│       │   ├── index.blade.php               
+│       │   └── show.blade.php             
 │       │
 │       └── receipts/
-│           └── pdf.blade.php                     # dompdf template
+│           └── pdf.blade.php                  
 │
 ├── routes/
-│   └── web.php                                   # grouped by role middleware
+│   └── web.php                              
 │
 └── public/
-    └── ... (standard Laravel public assets)
 ```
 
 ## Build Order (Planned)
