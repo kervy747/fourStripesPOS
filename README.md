@@ -2,7 +2,7 @@
 
 A Laravel-based Point of Sale (POS) system built for **Four Stripes Equipment and Machines Corp.**, a seller of cacao machines, tools, and related equipment.
 
-> Cacao Machines. Better Possibilities.
+> Cacao Machines
 
 ## About
 
