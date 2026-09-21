@@ -6,20 +6,27 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('sales', function (Blueprint $table) {
+            // PRIMARY KEY
             $table->id();
+
+            // RELATIONSHIPS
+            $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+
+            // SALE INFO
+            $table->enum('status', ['pending', 'completed'])->default('pending');
+            $table->enum('payment_method', ['cash', 'cashless'])->nullable();
+            $table->decimal('down_payment', 10, 2)->nullable();
+            $table->text('notes')->nullable();
+            $table->decimal('total', 10, 2);
+
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('sales');
