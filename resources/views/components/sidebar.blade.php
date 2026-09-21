@@ -15,43 +15,28 @@
         {{-- POS --}}
         <a href="{{ route('pos.index') }}"
            class="flex items-center gap-3 px-4 py-3 rounded-lg {{ $active === 'pos' ? 'bg-brand-yellow text-brand-black font-semibold' : 'text-neutral-200 hover:bg-neutral-900' }}">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="9" cy="21" r="1"></circle>
-                <circle cx="20" cy="21" r="1"></circle>
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-            </svg>
+            <img src="{{ asset('images/icons/' . ($active === 'pos' ? 'black-cart.svg' : 'white-cart.svg')) }}" class="w-5 h-5" alt="">
             POS
         </a>
 
         {{-- INVENTORY --}}
         <a href="{{ route('inventory.index') }}"
            class="flex items-center gap-3 px-4 py-3 rounded-lg {{ $active === 'inventory' ? 'bg-brand-yellow text-brand-black font-semibold' : 'text-neutral-200 hover:bg-neutral-900' }}">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="1" y="3" width="22" height="5" rx="1"></rect>
-                <path d="M3 8v11a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8"></path>
-                <line x1="10" y1="12" x2="14" y2="12"></line>
-            </svg>
+            <img src="{{ asset('images/icons/' . ($active === 'inventory' ? 'black-inventory.svg' : 'white-inventory.svg')) }}" class="w-5 h-5" alt="">
             Inventory
         </a>
 
         {{-- SALES TRACKING --}}
         <a href="{{ route('sales.index') }}"
            class="flex items-center gap-3 px-4 py-3 rounded-lg {{ $active === 'sales' ? 'bg-brand-yellow text-brand-black font-semibold' : 'text-neutral-200 hover:bg-neutral-900' }}">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                <polyline points="17 6 23 6 23 12"></polyline>
-            </svg>
+            <img src="{{ asset('images/icons/' . ($active === 'sales' ? 'black-sales.svg' : 'white-sales.svg')) }}" class="w-5 h-5" alt="">
             Sales Tracking
         </a>
 
         {{-- REPORTS --}}
         <a href="{{ route('reports.index') }}"
            class="flex items-center gap-3 px-4 py-3 rounded-lg {{ $active === 'reports' ? 'bg-brand-yellow text-brand-black font-semibold' : 'text-neutral-200 hover:bg-neutral-900' }}">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="20" x2="18" y2="10"></line>
-                <line x1="12" y1="20" x2="12" y2="4"></line>
-                <line x1="6" y1="20" x2="6" y2="14"></line>
-            </svg>
+            <img src="{{ asset('images/icons/' . ($active === 'reports' ? 'black-reports.svg' : 'white-reports.svg')) }}" class="w-5 h-5" alt="">
             Reports
         </a>
 
@@ -61,21 +46,14 @@
             {{-- USER MANAGEMENT --}}
             <a href="{{ route('users.index') }}"
                class="flex items-center gap-3 px-4 py-3 rounded-lg {{ $active === 'users' ? 'bg-brand-yellow text-brand-black font-semibold' : 'text-neutral-200 hover:bg-neutral-900' }}">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
+                <img src="{{ asset('images/icons/' . ($active === 'users' ? 'black-users.svg' : 'white-users.svg')) }}" class="w-5 h-5" alt="">
                 User Management
             </a>
 
             {{-- AUDIT LOG --}}
             <a href="{{ route('audit-log.index') }}"
                class="flex items-center gap-3 px-4 py-3 rounded-lg {{ $active === 'audit-log' ? 'bg-brand-yellow text-brand-black font-semibold' : 'text-neutral-200 hover:bg-neutral-900' }}">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-                </svg>
+                <img src="{{ asset('images/icons/' . ($active === 'audit-log' ? 'black-audit.svg' : 'white-audit.svg')) }}" class="w-5 h-5" alt="">
                 Audit Log
             </a>
 
@@ -88,11 +66,7 @@
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="flex items-center gap-3 px-4 py-3 rounded-lg text-neutral-200 hover:bg-neutral-900 w-full text-left">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                    <polyline points="16 17 21 12 16 7"></polyline>
-                    <line x1="21" y1="12" x2="9" y2="12"></line>
-                </svg>
+                <img src="{{ asset('images/icons/white-logout.svg') }}" class="w-5 h-5" alt="">
                 Logout
             </button>
         </form>

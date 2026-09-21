@@ -9,8 +9,8 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
 
             <div class="bg-neutral-0 rounded-xl p-4 shadow-sm flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-info-tint flex items-center justify-center text-info font-bold">
-                    #
+                <div class="w-10 h-10 rounded-full bg-info-tint flex items-center justify-center">
+                    <img src="{{ asset('images/icons/blue-hashtag.svg') }}" class="w-5 h-5" alt="">
                 </div>
                 <div>
                     <p class="text-xl font-heading font-bold text-neutral-900">{{ $totalItems }}</p>
@@ -19,8 +19,8 @@
             </div>
 
             <div class="bg-neutral-0 rounded-xl p-4 shadow-sm flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-success-tint flex items-center justify-center text-success font-bold">
-                    &check;
+                <div class="w-10 h-10 rounded-full bg-success-tint flex items-center justify-center">
+                    <img src="{{ asset('images/icons/green-check.svg') }}" class="w-5 h-5" alt="">
                 </div>
                 <div>
                     <p class="text-xl font-heading font-bold text-neutral-900">{{ $inStockCount }}</p>
@@ -29,8 +29,8 @@
             </div>
 
             <div class="bg-neutral-0 rounded-xl p-4 shadow-sm flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-warning-tint flex items-center justify-center text-warning font-bold">
-                    !
+                <div class="w-10 h-10 rounded-full bg-warning-tint flex items-center justify-center">
+                    <img src="{{ asset('images/icons/orange-warning.svg') }}" class="w-5 h-5" alt="">
                 </div>
                 <div>
                     <p class="text-xl font-heading font-bold text-neutral-900">{{ $lowStockCount }}</p>
@@ -39,8 +39,8 @@
             </div>
 
             <div class="bg-neutral-0 rounded-xl p-4 shadow-sm flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-danger-tint flex items-center justify-center text-danger font-bold">
-                    &times;
+                <div class="w-10 h-10 rounded-full bg-danger-tint flex items-center justify-center">
+                    <img src="{{ asset('images/icons/red-remove.svg') }}" class="w-5 h-5" alt="">
                 </div>
                 <div>
                     <p class="text-xl font-heading font-bold text-neutral-900">{{ $outOfStockCount }}</p>
@@ -153,8 +153,8 @@
                                 @endif
                             </td>
                             <td class="p-3">
-                                <a href="{{ route('inventory.edit', $product->id) }}" class="text-neutral-500 hover:text-brand-yellow-deep">
-                                    &#9998;
+                                <a href="{{ route('inventory.edit', $product->id) }}">
+                                    <img src="{{ asset('images/icons/grey-edit.svg') }}" class="w-4 h-4" alt="Edit">
                                 </a>
                             </td>
                         </tr>

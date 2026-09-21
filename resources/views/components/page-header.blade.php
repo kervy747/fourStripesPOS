@@ -5,7 +5,7 @@
     {{-- PAGE TITLE --}}
     <div class="flex items-center gap-4">
         <button class="text-neutral-700 text-xl">
-            &#9776;
+            <img src="{{ asset('images/icons/grey-menu.svg') }}" class="w-5 h-5" alt="Menu">
         </button>
         <div>
             <h1 class="font-heading font-bold text-xl text-neutral-900">{{ $title }}</h1>

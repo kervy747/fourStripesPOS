@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\PosController;
 
 // ROOT REDIRECT
 Route::get('/', function () {
@@ -22,9 +23,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
     // POS
-    Route::get('/pos', function () {
-        return 'POS page coming soon';
-    })->name('pos.index');
+    Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
+    Route::post('/pos/add/{product}', [PosController::class, 'add'])->name('pos.add');
+    Route::post('/pos/cart/update', [PosController::class, 'updateCart'])->name('pos.cart.update');
 
     // INVENTORY
     Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
@@ -35,21 +36,21 @@ Route::middleware('auth')->group(function () {
 
     // SALES TRACKING
     Route::get('/sales', function () {
-        return 'Sales Tracking page coming soon';
+        return view('sales.index');
     })->name('sales.index');
 
     // REPORTS (SHARED - ADMIN & STAFF)
     Route::get('/reports', function () {
-        return 'Reports page coming soon';
+        return view('reports.index');
     })->name('reports.index');
 
     // ADMIN ONLY ROUTES
     Route::get('/users', function () {
-        return 'User Management page coming soon';
+        return view('admin.users.index');
     })->name('users.index');
 
     Route::get('/audit-log', function () {
-        return 'Audit Log page coming soon';
+        return view('admin.audit-log.index');
     })->name('audit-log.index');
 
 });
