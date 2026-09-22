@@ -4,7 +4,10 @@
 
     <main class="p-6 flex-1">
 
-        {{-- INFO / ERROR MESSAGES --}}
+        {{-- INFO / ERROR / SUCCESS MESSAGES --}}
+        @if(session('success'))
+            <div class="bg-success-tint text-success p-3 rounded-lg mb-4 text-sm">{{ session('success') }}</div>
+        @endif
         @if(session('info'))
             <div class="bg-info-tint text-info p-3 rounded-lg mb-4 text-sm">{{ session('info') }}</div>
         @endif

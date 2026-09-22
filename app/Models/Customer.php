@@ -15,4 +15,10 @@ class Customer extends Model
         'phone_number',
         'address',
     ];
+
+    // RELATIONSHIPS
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
+    }
 }

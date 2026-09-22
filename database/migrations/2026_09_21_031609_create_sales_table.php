@@ -9,14 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('sales', function (Blueprint $table) {
-            // PRIMARY KEY
             $table->id();
-
-            // RELATIONSHIPS
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-
-            // SALE INFO
             $table->enum('status', ['pending', 'completed'])->default('pending');
             $table->enum('payment_method', ['cash', 'cashless'])->nullable();
             $table->decimal('down_payment', 10, 2)->nullable();

@@ -3,13 +3,13 @@
     <div class="flex flex-1">
 
         {{-- LEFT BRANDING PANEL --}}
-        <div class="hidden md:flex md:w-1/2 relative overflow-hidden">
+        <div class="hidden md:flex md:w-[65%] relative overflow-hidden">
 
             {{-- BACKDROP IMAGE --}}
             <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{ asset('images/background.png') }}')"></div>
 
             {{-- DARK OVERLAY --}}
-            <div class="absolute inset-0 bg-brand-black/85"></div>
+            <div class="absolute inset-0 bg-brand-black/50"></div>
 
             {{-- CONTENT --}}
             <div class="relative z-10 flex flex-col justify-between p-12 text-neutral-0 w-full">
@@ -26,10 +26,9 @@
 
                 {{-- LOGO + TAGLINE --}}
                 <div class="flex flex-col items-center">
-                    <img src="{{ asset('images/logo.png') }}" alt="Four Stripes Logo" class="h-56 mb-6">
+                    <img src="{{ asset('images/logo.png') }}" alt="Four Stripes Logo" class="h-100 -mb-6 select-none" draggable="false">
                     <p class="text-center text-neutral-300 tracking-wide font-heading font-semibold">
-                        CACAO MACHINES<br>
-                        BETTER POSSIBILITIES.
+                        Engineering the Future of Cacao
                     </p>
                 </div>
 
@@ -57,7 +56,7 @@
         </div>
 
         {{-- RIGHT LOGIN FORM PANEL --}}
-        <div class="w-full md:w-1/2 flex items-center justify-center bg-neutral-0 p-8">
+        <div class="w-full md:w-[35%] flex items-center justify-center bg-neutral-0 p-8">
             <div class="w-full max-w-md">
 
                 {{-- HEADER --}}
@@ -103,7 +102,7 @@
 
                     {{-- LOGIN BUTTON --}}
                     <x-button type="submit" class="w-full">
-                        Login &rarr;
+                        LOGIN
                     </x-button>
 
                 </form>

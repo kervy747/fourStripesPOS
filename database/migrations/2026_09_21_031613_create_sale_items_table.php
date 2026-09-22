@@ -9,14 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('sale_items', function (Blueprint $table) {
-            // PRIMARY KEY
             $table->id();
-
-            // RELATIONSHIPS
             $table->foreignId('sale_id')->constrained()->cascadeOnDelete();
             $table->foreignId('product_id')->nullable()->constrained()->nullOnDelete();
-
-            // SNAPSHOT INFO (IN CASE PRODUCT DETAILS CHANGE LATER)
             $table->string('item_code');
             $table->string('item_name');
             $table->integer('quantity');
