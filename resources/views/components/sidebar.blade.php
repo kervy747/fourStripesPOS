@@ -72,10 +72,4 @@
         </form>
     </div>
 
-    {{-- FOOTER TAGLINE --}}
-    <div class="p-4 text-[10px] text-neutral-600 border-t border-neutral-900 font-body tracking-wide">
-        CACAO MACHINES.<br>
-        <span class="text-brand-yellow">BETTER POSSIBILITIES.</span>
-    </div>
-
 </aside>

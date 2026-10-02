@@ -6,7 +6,16 @@
 
         {{-- INFO / ERROR / SUCCESS MESSAGES --}}
         @if(session('success'))
-            <div class="bg-success-tint text-success p-3 rounded-lg mb-4 text-sm">{{ session('success') }}</div>
+            <div class="bg-success-tint text-success p-3 rounded-lg mb-4 text-sm flex items-center justify-between">
+                <span>{{ session('success') }}</span>
+
+                @if(session('receipt_url'))
+                    <a href="{{ session('receipt_url') }}" target="_blank"
+                    class="ml-4 font-semibold text-brand-yellow-deep underline">
+                        View Receipt
+                    </a>
+                @endif
+            </div>
         @endif
         @if(session('info'))
             <div class="bg-info-tint text-info p-3 rounded-lg mb-4 text-sm">{{ session('info') }}</div>

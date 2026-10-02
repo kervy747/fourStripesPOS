@@ -13,8 +13,8 @@ return new class extends Migration
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->enum('status', ['pending', 'completed'])->default('pending');
-            $table->enum('payment_method', ['cash', 'cashless'])->nullable();
-            $table->decimal('down_payment', 10, 2)->nullable();
+            $table->decimal('cash_received', 10, 2);
+            $table->decimal('change', 10, 2)->default(0);
             $table->text('notes')->nullable();
             $table->decimal('total', 10, 2);
 

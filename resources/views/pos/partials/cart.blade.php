@@ -69,7 +69,8 @@
             {{-- NAME + FIND --}}
             <div class="flex gap-2 mb-2">
                 <input type="text" name="customer_name" value="{{ $customerName }}" placeholder="Enter customer name..."
-                       class="flex-1 border border-neutral-200 rounded-lg py-2 px-3 text-sm">
+                       class="flex-1 border border-neutral-200 rounded-lg py-2 px-3 text-sm"
+                       onkeydown="if(event.key === 'Enter'){ event.preventDefault(); }">
                 @unless($selectedCustomerId)
                     <button type="submit" name="find_customer" value="1" class="bg-neutral-100 text-neutral-700 text-xs font-semibold px-3 rounded-lg">
                         Find
@@ -94,42 +95,39 @@
             <div class="flex gap-2">
                 {{-- PHONE (OPTIONAL) --}}
                 <input type="text" name="customer_phone" value="{{ $customerPhone }}" placeholder="Phone # (optional)"
-                    class="w-[35%] border border-neutral-200 rounded-lg py-2 px-3 text-sm">
+                    class="w-[35%] border border-neutral-200 rounded-lg py-2 px-3 text-sm"
+                    onkeydown="if(event.key === 'Enter'){ event.preventDefault(); }">
 
                 {{-- ADDRESS (REQUIRED) --}}
                 <input type="text" name="customer_address" value="{{ $customerAddress }}" placeholder="Address"
-                    class="w-[65%] border border-neutral-200 rounded-lg py-2 px-3 text-sm">
+                    class="w-[65%] border border-neutral-200 rounded-lg py-2 px-3 text-sm"
+                    onkeydown="if(event.key === 'Enter'){ event.preventDefault(); }">
                 <x-error name="customer_address" />
 
             </div>
 
         </div>
 
-        {{-- PAYMENT METHOD --}}
+        {{-- CASH RECEIVED --}}
         <div class="mb-3">
-            <label class="block text-xs font-semibold text-neutral-700 mb-1">Payment Method</label>
-            <div class="flex gap-4 text-sm">
-                <label class="flex items-center gap-1">
-                    <input type="radio" name="payment_method" value="cash" checked>
-                    Cash
-                </label>
-                <label class="flex items-center gap-1">
-                    <input type="radio" name="payment_method" value="cashless">
-                    Cashless
-                </label>
+            <label class="block text-xs font-semibold text-neutral-700 mb-1">Cash Received</label>
+            <div class="flex gap-2">
+                <input type="number" step="0.01" min="0" name="cash_received" id="cash_received" value="{{ $cashReceived }}" placeholder="0.00"
+                       class="flex-1 border border-neutral-200 rounded-lg py-2 px-3 text-sm"
+                       onkeydown="if(event.key === 'Enter'){ event.preventDefault(); document.getElementById('calculate_change_btn').click(); }">
+                <button type="submit" name="calculate_change" value="1" id="calculate_change_btn"
+                        class="bg-neutral-100 text-neutral-700 text-xs font-semibold px-3 rounded-lg">
+                    Calculate Change
+                </button>
             </div>
-            <x-error name="payment_method" />
+            <x-error name="cash_received" />
         </div>
 
-        {{-- DOWN PAYMENT (FOR PENDING TRANSACTIONS) --}}
-        <div class="mb-3">
-            <label class="block text-xs font-semibold text-neutral-700 mb-1">Down Payment (Optional, for Pending)</label>
-            <input type="number" step="0.01" name="down_payment" placeholder="0.00"
-                   class="w-full border border-neutral-200 rounded-lg py-2 px-3 text-sm">
+        {{-- CHANGE --}}
+        <div class="mb-3 flex justify-between items-center bg-neutral-100 rounded-lg px-3 py-2">
+            <span class="text-xs font-semibold text-neutral-700">Change</span>
+            <span class="text-sm font-bold text-neutral-900">&#8369; {{ number_format($change, 2) }}</span>
         </div>
-
-        {{-- SHIPPING FIELDS GO HERE (NEXT STEP) --}}
-        @include('pos.partials.shipping-fields')
 
         {{-- TOTAL --}}
         <div class="border-t border-neutral-200 pt-3 mb-4">
