@@ -26,7 +26,7 @@
 
                 {{-- LOGO + TAGLINE --}}
                 <div class="flex flex-col items-center">
-                    <img src="{{ asset('images/logo.png') }}" alt="Four Stripes Logo" class="h-100 -mb-6 select-none" draggable="false">
+                    <img src="{{ asset('images/logo.png') }}" alt="Four Stripes Logo" class="h-130 -mb-6 select-none" draggable="false">
                     <p class="text-center text-neutral-300 tracking-wide font-heading font-semibold text-xl">
                         ENGINEERING THE FUTURE OF CACAO
                     </p>
@@ -57,7 +57,7 @@
 
         {{-- RIGHT LOGIN FORM PANEL --}}
         <div class="w-full md:w-[35%] flex items-center justify-center bg-neutral-0 p-8">
-            <div class="w-full max-w-md">
+            <div class="w-full max-w-lg">
 
                 {{-- HEADER --}}
                 <p class="text-xs tracking-widest text-neutral-600 font-heading mb-2">WELCOME TO</p>
@@ -66,10 +66,6 @@
                     EQUIPMENT AND MACHINES CORP.
                 </p>
                 <div class="w-10 h-1 bg-brand-yellow mt-3 mb-4"></div>
-
-                <p class="text-sm text-neutral-600 mb-6">
-                    Manage sales, inventory, and operations for a stronger, more sustainable cacao industry. Access your terminal below.
-                </p>
 
                 {{-- LOGIN FORM --}}
                 <form method="POST" action="{{ route('login.attempt') }}" class="space-y-4">
@@ -93,11 +89,6 @@
                             </x-slot:icon>
                         </x-input>
                         <x-error name="password" />
-                    </div>
-
-                    {{-- FORGOT PASSWORD --}}
-                    <div class="flex items-center justify-end text-sm">
-                        <a href="#" class="text-brand-yellow-deep font-semibold hover:underline">Forgot password?</a>
                     </div>
 
                     {{-- LOGIN BUTTON --}}
