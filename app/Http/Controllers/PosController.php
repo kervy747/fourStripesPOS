@@ -42,11 +42,15 @@ class PosController extends Controller
         $customerAddress = session('cart_customer_address', '');
         $selectedCustomerId = session('cart_customer_id');
         $customerMatches = session('customer_matches', []);
+        $cashReceived = session('cart_cash_received', '');
 
         // CALCULATE TOTAL
         $total = collect($cart)->sum(function ($item) {
             return $item['price'] * $item['quantity'];
         });
+
+        // CALCULATE CHANGE
+        $change = is_numeric($cashReceived) ? max($cashReceived - $total, 0) : 0;
 
         return view('pos.index', compact(
             'products',
@@ -57,6 +61,8 @@ class PosController extends Controller
             'customerAddress',
             'selectedCustomerId',
             'customerMatches',
+            'cashReceived',
+            'change',
             'total'
         ));
     }
@@ -92,11 +98,12 @@ class PosController extends Controller
     {
         $cart = session('cart', []);
 
-        // ALWAYS SAVE NOTES AND TYPED CUSTOMER INFO
+        // ALWAYS SAVE NOTES, CUSTOMER INFO, AND CASH RECEIVED
         session(['cart_notes' => $request->input('notes', '')]);
         session(['cart_customer_name' => $request->input('customer_name', '')]);
         session(['cart_customer_phone' => $request->input('customer_phone', '')]);
         session(['cart_customer_address' => $request->input('customer_address', '')]);
+        session(['cart_cash_received' => $request->input('cash_received', '')]);
 
         // INCREASE QUANTITY
         if ($request->has('increase')) {
@@ -177,16 +184,27 @@ class PosController extends Controller
             return redirect()->route('pos.index')->with('error', 'Cart is empty.');
         }
 
-        // VALIDATE CUSTOMER AND PAYMENT INFO
+        // CALCULATE TOTAL
+        $total = collect($cart)->sum(function ($item) {
+            return $item['price'] * $item['quantity'];
+        });
+
+        // VALIDATE CUSTOMER AND CASH INFO
         $validated = $request->validate([
             'customer_name' => ['required', 'string'],
             'customer_phone' => ['nullable', 'string'],
             'customer_address' => ['required', 'string'],
-            'payment_method' => ['required', 'in:cash,cashless'],
-            'down_payment' => ['nullable', 'numeric', 'min:0'],
+            'cash_received' => ['required', 'numeric', 'min:0'],
         ]);
 
         $status = $request->input('checkout') === 'completed' ? 'completed' : 'pending';
+
+        // CASH MUST COVER THE TOTAL WHEN COMPLETING A SALE
+        if ($status === 'completed' && $validated['cash_received'] < $total) {
+            return redirect()->route('pos.index')->with('error', 'Cash received is less than the total.');
+        }
+
+        $change = max($validated['cash_received'] - $total, 0);
 
         // GET OR CREATE CUSTOMER
         $customerId = session('cart_customer_id');
@@ -201,18 +219,13 @@ class PosController extends Controller
             ]);
         }
 
-        // CALCULATE TOTAL
-        $total = collect($cart)->sum(function ($item) {
-            return $item['price'] * $item['quantity'];
-        });
-
         // CREATE THE SALE
         $sale = Sale::create([
             'customer_id' => $customer->id,
             'user_id' => Auth::id(),
             'status' => $status,
-            'payment_method' => $validated['payment_method'],
-            'down_payment' => $validated['down_payment'] ?? null,
+            'cash_received' => $validated['cash_received'],
+            'change' => $change,
             'notes' => $request->input('notes'),
             'total' => $total,
         ]);
@@ -247,12 +260,15 @@ class PosController extends Controller
             'cart_customer_address',
             'cart_customer_id',
             'customer_matches',
+            'cart_cash_received',
         ]);
 
         $message = $status === 'completed'
             ? 'Sale completed successfully.'
             : 'Transaction saved as pending.';
 
-        return redirect()->route('pos.index')->with('success', $message);
-    }
-}
+        return redirect()->route('pos.index')
+            ->with('success', $message)
+            ->with('receipt_url', route('receipts.show', $sale->id));
+        }
+}   

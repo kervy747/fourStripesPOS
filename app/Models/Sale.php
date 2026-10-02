@@ -15,7 +15,6 @@ class Sale extends Model
         'user_id',
         'status',
         'payment_method',
-        'down_payment',
         'notes',
         'total',
     ];

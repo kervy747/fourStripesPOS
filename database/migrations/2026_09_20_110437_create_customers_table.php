@@ -8,17 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('customers', function (Blueprint $table) {
-            // PRIMARY KEY
-            $table->id();
+            Schema::create('customers', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->string('phone_number')->nullable();
+                $table->text('address');
 
-            // CUSTOMER INFO
-            $table->string('name');
-            $table->string('phone_number')->nullable();
-            $table->text('address');
-
-            $table->timestamps();
-        });
+                $table->timestamps();
+            });
     }
 
     public function down(): void

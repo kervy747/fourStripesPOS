@@ -26,13 +26,19 @@
     {{-- CATEGORY --}}
     <div>
         <label class="block text-sm font-semibold text-neutral-900 mb-1 font-body">Category</label>
-        <select name="category" class="w-full border border-neutral-200 bg-neutral-100 rounded-lg py-3 px-4 text-sm font-body focus:outline-none focus:ring-2 focus:ring-brand-yellow">
-            <option value="">Select category</option>
-            <option value="machines" @selected(old('category', $product->category ?? '') === 'machines')>Machines</option>
-            <option value="tools" @selected(old('category', $product->category ?? '') === 'tools')>Tools</option>
-            <option value="accessories" @selected(old('category', $product->category ?? '') === 'accessories')>Accessories</option>
-        </select>
-        <x-error name="category" />
+        @if($product)
+            <input type="text" value="{{ ucfirst($product->category) }}" disabled
+                class="w-full border border-neutral-200 bg-neutral-100 rounded-lg py-3 px-4 text-sm font-body text-neutral-500">
+            <p class="text-xs text-neutral-400 mt-1 font-body">Category cannot be changed after an item is created.</p>
+        @else
+            <select name="category" class="w-full border border-neutral-200 bg-neutral-100 rounded-lg py-3 px-4 text-sm font-body focus:outline-none focus:ring-2 focus:ring-brand-yellow">
+                <option value="">Select category</option>
+                <option value="machines" @selected(old('category') === 'machines')>Machines</option>
+                <option value="tools" @selected(old('category') === 'tools')>Tools</option>
+                <option value="accessories" @selected(old('category') === 'accessories')>Accessories</option>
+            </select>
+            <x-error name="category" />
+        @endif
     </div>
 
     {{-- UNIT --}}

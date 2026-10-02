@@ -27,8 +27,8 @@
                 {{-- LOGO + TAGLINE --}}
                 <div class="flex flex-col items-center">
                     <img src="{{ asset('images/logo.png') }}" alt="Four Stripes Logo" class="h-100 -mb-6 select-none" draggable="false">
-                    <p class="text-center text-neutral-300 tracking-wide font-heading font-semibold">
-                        Engineering the Future of Cacao
+                    <p class="text-center text-neutral-300 tracking-wide font-heading font-semibold text-xl">
+                        ENGINEERING THE FUTURE OF CACAO
                     </p>
                 </div>
 

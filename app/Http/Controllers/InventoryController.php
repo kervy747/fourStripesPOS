@@ -125,7 +125,6 @@ class InventoryController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string'],
-            'category' => ['required', 'in:machines,tools,accessories'],
             'unit' => ['required', 'string'],
             'quantity' => ['required', 'integer', 'min:0'],
             'standard_level' => ['required', 'integer', 'min:0'],
@@ -138,7 +137,7 @@ class InventoryController extends Controller
         // WARRANTY IS ALWAYS EXACTLY 1 MONTH OR NONE
         $validated['warranty_months'] = $request->boolean('has_warranty') ? 1 : null;
 
-        // ITEM CODE STAYS FIXED, NOT INCLUDED IN UPDATE
+        // ITEM CODE AND CATEGORY STAY FIXED, NOT INCLUDED IN UPDATE
         $product->update($validated);
 
         return redirect()->route('inventory.index')->with('success', 'Item updated successfully.');

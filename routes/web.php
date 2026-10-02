@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\PosController;
+use App\Http\Controllers\ReceiptController;
+use App\Http\Controllers\SalesController;
+
 
 // ROOT REDIRECT
 Route::get('/', function () {
@@ -27,6 +30,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/pos/add/{product}', [PosController::class, 'add'])->name('pos.add');
     Route::post('/pos/cart/update', [PosController::class, 'updateCart'])->name('pos.cart.update');
 
+    // RECEIPTS
+    Route::get('/receipts/{sale}', [ReceiptController::class, 'show'])->name('receipts.show');
+    Route::get('/receipts/{sale}/download', [ReceiptController::class, 'download'])->name('receipts.download');
+
     // INVENTORY
     Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
     Route::get('/inventory/create', [InventoryController::class, 'create'])->name('inventory.create');
@@ -35,9 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/inventory/{product}', [InventoryController::class, 'update'])->name('inventory.update');
 
     // SALES TRACKING
-    Route::get('/sales', function () {
-        return view('sales.index');
-    })->name('sales.index');
+    Route::get('/sales', [SalesController::class, 'index'])->name('sales.index');
+    Route::patch('/sales/{sale}/complete', [SalesController::class, 'markCompleted'])->name('sales.complete');
 
     // REPORTS (SHARED - ADMIN & STAFF)
     Route::get('/reports', function () {
