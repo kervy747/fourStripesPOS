@@ -48,13 +48,6 @@
             @endforelse
         </div>
 
-        {{-- NOTES --}}
-        <div class="mb-3">
-            <label class="block text-xs font-semibold text-neutral-700 mb-1">Notes (Optional)</label>
-            <textarea name="notes" rows="2" placeholder="Add notes for this transaction..."
-                      class="w-full border border-neutral-200 rounded-lg py-2 px-3 text-sm">{{ $notes }}</textarea>
-        </div>
-
         {{-- CUSTOMER --}}
         <div class="mb-3">
             <div class="flex items-center justify-between mb-1">
@@ -115,10 +108,6 @@
                 <input type="number" step="0.01" min="0" name="cash_received" id="cash_received" value="{{ $cashReceived }}" placeholder="0.00"
                        class="flex-1 border border-neutral-200 rounded-lg py-2 px-3 text-sm"
                        onkeydown="if(event.key === 'Enter'){ event.preventDefault(); document.getElementById('calculate_change_btn').click(); }">
-                <button type="submit" name="calculate_change" value="1" id="calculate_change_btn"
-                        class="bg-neutral-100 text-neutral-700 text-xs font-semibold px-3 rounded-lg">
-                    Calculate Change
-                </button>
             </div>
             <x-error name="cash_received" />
         </div>
@@ -138,11 +127,7 @@
         </div>
 
         {{-- CHECKOUT BUTTONS --}}
-        <div class="flex gap-2">
-            <button type="submit" name="checkout" value="pending"
-                    class="flex-1 bg-neutral-100 text-neutral-700 font-semibold py-3 rounded-lg text-sm">
-                Save Pending
-            </button>
+        <div class="flex">
             <button type="submit" name="checkout" value="completed"
                     class="flex-1 bg-brand-yellow text-brand-black font-semibold py-3 rounded-lg text-sm">
                 Proceed to Payment
