@@ -7,7 +7,7 @@ use App\Http\Controllers\PosController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\UserController;
-
+use App\Http\Controllers\AuditLogController;
 
 // ROOT REDIRECT
 Route::get('/', function () {
@@ -68,10 +68,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
 
         // AUDIT LOG
-        Route::get('/audit-log', function () {
-            return view('admin.audit-log.index');
-        })->name('audit-log.index');
-
+      Route::get('/audit-log', [AuditLogController::class, 'index'])->name('audit-log.index');
     });
 
 });
