@@ -73,7 +73,7 @@
 
                     {{-- USERNAME (EMAIL) FIELD --}}
                     <div>
-                        <x-input label="Username" name="email" type="email" placeholder="Enter your username">
+                        <x-input label="Email" name="email" type="email" placeholder="Enter your email">
                             <x-slot:icon>
                                 <img src="{{ asset('images/icons/grey-person.svg') }}" class="w-4 h-4" alt="">
                             </x-slot:icon>

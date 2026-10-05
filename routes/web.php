@@ -6,6 +6,7 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\SalesController;
+use App\Http\Controllers\UserController;
 
 
 // ROOT REDIRECT
@@ -51,12 +52,26 @@ Route::middleware('auth')->group(function () {
     })->name('reports.index');
 
     // ADMIN ONLY ROUTES
-    Route::get('/users', function () {
-        return view('admin.users.index');
-    })->name('users.index');
+    Route::group(['middleware' => function ($request, $next) {
+        if (! auth()->user()->isAdmin()) {
+            abort(403);
+        }
+        return $next($request);
+    }], function () {
 
-    Route::get('/audit-log', function () {
-        return view('admin.audit-log.index');
-    })->name('audit-log.index');
+        // USER MANAGEMENT
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::patch('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+
+        // AUDIT LOG
+        Route::get('/audit-log', function () {
+            return view('admin.audit-log.index');
+        })->name('audit-log.index');
+
+    });
 
 });
