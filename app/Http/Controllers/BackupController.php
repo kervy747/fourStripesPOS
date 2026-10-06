@@ -43,7 +43,7 @@ class BackupController extends Controller
 
         // COMMAND FAILED
         if ($exitCode !== 0 || ! file_exists($filePath)) {
-            return back()->with('error', 'Backup failed. Please check your server configuration.');
+            return back()->with('error', 'Backup failed: ' . implode(' ', $output));
         }
 
         // LOG THE ACTION
@@ -83,21 +83,36 @@ class BackupController extends Controller
 
         // BUILD MYSQL RESTORE COMMAND
         $command = sprintf(
-            '"%s" --user=%s --password=%s --host=%s --port=%s %s < "%s" 2>&1',
+            '"%s" --user=%s --password=%s --host=%s --port=%s %s',
             $mysqlPath,
             escapeshellarg($dbUser),
             escapeshellarg($dbPass),
             escapeshellarg($dbHost),
             escapeshellarg($dbPort),
-            escapeshellarg($dbName),
-            $filePath
+            escapeshellarg($dbName)
         );
 
-        exec($command, $output, $exitCode);
+        // USE PROC_OPEN TO PIPE THE FILE — MORE RELIABLE ON WINDOWS THAN < REDIRECT
+        $descriptors = [
+            0 => ['file', $filePath, 'r'],
+            1 => ['pipe', 'w'],
+            2 => ['pipe', 'w'],
+        ];
+
+        $process = proc_open($command, $descriptors, $pipes);
+
+        if (! is_resource($process)) {
+            return back()->with('error', 'Restore failed. Could not start the database process.');
+        }
+
+        fclose($pipes[1]);
+        $errorOutput = stream_get_contents($pipes[2]);
+        fclose($pipes[2]);
+        $exitCode = proc_close($process);
 
         // COMMAND FAILED
         if ($exitCode !== 0) {
-            return back()->with('error', 'Restore failed. Please make sure the file is a valid backup.');
+            return back()->with('error', 'Restore failed: ' . $errorOutput);
         }
 
         // LOG THE ACTION

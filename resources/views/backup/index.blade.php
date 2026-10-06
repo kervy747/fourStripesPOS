@@ -34,13 +34,50 @@
                     <label for="backup_file" class="block text-sm font-semibold text-neutral-900 mb-1 font-body">
                         Select Backup File
                     </label>
+
+                    {{-- HIDDEN REAL INPUT --}}
                     <input
                         type="file"
                         name="backup_file"
                         id="backup_file"
                         accept=".sql"
-                        class="w-full border border-neutral-200 bg-neutral-100 rounded-lg py-3 px-4 text-sm font-body text-neutral-900 focus:outline-none focus:ring-2 focus:ring-brand-yellow"
+                        class="hidden"
+                        onchange="
+                            var name = this.files[0] ? this.files[0].name : null;
+                            var placeholder = document.getElementById('file-placeholder');
+                            var preview = document.getElementById('file-preview');
+                            var filename = document.getElementById('file-name');
+                            if (name) {
+                                placeholder.classList.add('hidden');
+                                preview.classList.remove('hidden');
+                                preview.classList.add('flex');
+                                filename.textContent = name;
+                            } else {
+                                placeholder.classList.remove('hidden');
+                                preview.classList.add('hidden');
+                                preview.classList.remove('flex');
+                            }
+                        "
                     >
+
+                    {{-- STYLED TRIGGER --}}
+                    <label for="backup_file"
+                        class="flex items-center gap-3 w-full border border-neutral-200 bg-neutral-100 rounded-lg py-3 px-4 cursor-pointer hover:bg-neutral-200 transition">
+
+                        {{-- PLACEHOLDER STATE --}}
+                        <span id="file-placeholder" class="flex items-center gap-2 text-sm text-neutral-500 font-body">
+                            <img src="{{ asset('images/icons/black-file.svg') }}" class="w-4 h-4 opacity-40" alt="">
+                            Choose a .sql file…
+                        </span>
+
+                        {{-- SELECTED STATE --}}
+                        <span id="file-preview" class="hidden items-center gap-2 text-sm text-neutral-900 font-body font-semibold"
+                            <img src="{{ asset('images/icons/black-file.svg') }}" class="w-4 h-4" alt="">
+                            <span id="file-name"></span>
+                        </span>
+
+                    </label>
+
                     <x-error name="backup_file" />
                 </div>
 
