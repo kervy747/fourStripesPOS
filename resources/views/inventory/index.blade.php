@@ -125,7 +125,7 @@
                         <th class="p-3">Category</th>
                         <th class="p-3">Stock Qty</th>
                         <th class="p-3">Unit</th>
-                        <th class="p-3">Standard Level</th>
+                        <th class="p-3">Reorder Level</th>
                         <th class="p-3">Unit Cost</th>
                         <th class="p-3">Selling Price</th>
                         <th class="p-3">Status</th>
@@ -140,7 +140,7 @@
                             <td class="p-3 text-neutral-600 capitalize">{{ $product->category }}</td>
                             <td class="p-3 text-neutral-900">{{ $product->quantity }}</td>
                             <td class="p-3 text-neutral-600">{{ $product->unit }}</td>
-                            <td class="p-3 text-neutral-600">{{ $product->standard_level }}</td>
+                            <td class="p-3 text-neutral-600">{{ $product->reeorder_level }}</td>
                             <td class="p-3 text-neutral-900">&#8369; {{ number_format($product->unit_cost, 2) }}</td>
                             <td class="p-3 text-neutral-900">&#8369; {{ number_format($product->price, 2) }}</td>
                             <td class="p-3">

@@ -3,7 +3,7 @@
 
     <h2 class="font-heading font-bold text-lg text-neutral-900 mb-4">Current Transaction</h2>
 
-    <form method="POST" action="{{ route('pos.cart.update') }}" class="flex flex-col flex-1 min-h-0">
+    <form id="cart-form" method="POST" action="{{ route('pos.cart.update') }}" class="flex flex-col flex-1 min-h-0">
         @csrf
 
         {{-- CART ITEMS --}}
@@ -48,70 +48,16 @@
             @endforelse
         </div>
 
-        {{-- CUSTOMER --}}
-        <div class="mb-3">
-            <div class="flex items-center justify-between mb-1">
-                <label class="block text-xs font-semibold text-neutral-700">Customer Name</label>
-                @if($selectedCustomerId)
-                    <button type="submit" name="clear_customer" value="1" class="text-xs text-brand-yellow-deep font-semibold">
-                        Search again
-                    </button>
-                @endif
-            </div>
-
-            {{-- NAME + FIND --}}
-            <div class="flex gap-2 mb-2">
-                <input type="text" name="customer_name" value="{{ $customerName }}" placeholder="Enter customer name..."
-                       class="flex-1 border border-neutral-200 rounded-lg py-2 px-3 text-sm"
-                       onkeydown="if(event.key === 'Enter'){ event.preventDefault(); }">
-                @unless($selectedCustomerId)
-                    <button type="submit" name="find_customer" value="1" class="bg-neutral-100 text-neutral-700 text-xs font-semibold px-3 rounded-lg">
-                        Find
-                    </button>
-                @endunless
-            </div>
-
-            //Kervy
-
-            {{-- MATCHED CUSTOMERS --}}
-            @if(!$selectedCustomerId && count($customerMatches) > 0)
-                <div class="border border-neutral-200 rounded-lg mb-2 max-h-32 overflow-y-auto">
-                    @foreach($customerMatches as $match)
-                        <button type="submit" name="select_customer" value="{{ $match['id'] }}"
-                                class="w-full text-left px-3 py-2 text-xs border-b border-neutral-100 hover:bg-neutral-100">
-                            <p class="font-semibold text-neutral-900">{{ $match['name'] }}</p>
-                            <p class="text-neutral-500">{{ $match['phone_number'] ?? 'No phone on file' }}</p>
-                            <p class="text-neutral-500">{{ $match['address'] }}</p>
-                        </button>
-                    @endforeach
-                </div>
-            @endif
-
-            <div class="flex gap-2">
-                {{-- PHONE (OPTIONAL) --}}
-                <input type="text" name="customer_phone" value="{{ $customerPhone }}" placeholder="Phone # (optional)"
-                    class="w-[35%] border border-neutral-200 rounded-lg py-2 px-3 text-sm"
-                    onkeydown="if(event.key === 'Enter'){ event.preventDefault(); }">
-
-                {{-- ADDRESS (REQUIRED) --}}
-                <input type="text" name="customer_address" value="{{ $customerAddress }}" placeholder="Address"
-                    class="w-[65%] border border-neutral-200 rounded-lg py-2 px-3 text-sm"
-                    onkeydown="if(event.key === 'Enter'){ event.preventDefault(); }">
-                <x-error name="customer_address" />
-
-            </div>
-
-        </div>
-
         {{-- CASH RECEIVED --}}
         <div class="mb-3">
             <label class="block text-xs font-semibold text-neutral-700 mb-1">Cash Received</label>
             <div class="flex gap-2">
                 <input type="number" step="0.01" min="0" name="cash_received" id="cash_received" value="{{ $cashReceived }}" placeholder="0.00"
-                       class="flex-1 border border-neutral-200 rounded-lg py-2 px-3 text-sm"
+                       class="flex-1 border border-neutral-200 rounded-lg py-2 px-3 text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                        onkeydown="if(event.key === 'Enter'){ event.preventDefault(); document.getElementById('calculate_change_btn').click(); }">
             </div>
             <x-error name="cash_received" />
+            <button type="submit" id="calculate_change_btn" name="calculate_change" value="1" class="hidden"></button>
         </div>
 
         {{-- CHANGE --}}

@@ -32,10 +32,10 @@ class InventoryController extends Controller
             if ($request->stock_status === 'out_of_stock') {
                 $query->where('quantity', 0);
             } elseif ($request->stock_status === 'low_stock') {
-                $query->whereColumn('quantity', '<=', 'standard_level')
+                $query->whereColumn('quantity', '<=', 'reorder_level')
                       ->where('quantity', '>', 0);
             } elseif ($request->stock_status === 'in_stock') {
-                $query->whereColumn('quantity', '>', 'standard_level');
+                $query->whereColumn('quantity', '>', 'reorder_level');
             }
         }
 
@@ -44,8 +44,8 @@ class InventoryController extends Controller
 
         // SUMMARY COUNTS (BASED ON ALL PRODUCTS, NOT FILTERED)
         $totalItems = Product::count();
-        $inStockCount = Product::whereColumn('quantity', '>', 'standard_level')->count();
-        $lowStockCount = Product::whereColumn('quantity', '<=', 'standard_level')->where('quantity', '>', 0)->count();
+        $inStockCount = Product::whereColumn('quantity', '>', 'reorder_level')->count();
+        $lowStockCount = Product::whereColumn('quantity', '<=', 'reorder_level')->where('quantity', '>', 0)->count();
         $outOfStockCount = Product::where('quantity', 0)->count();
 
         return view('inventory.index', compact(
@@ -71,7 +71,7 @@ class InventoryController extends Controller
             'category' => ['required', 'in:machines,tools,accessories'],
             'unit' => ['required', 'string'],
             'quantity' => ['required', 'integer', 'min:0'],
-            'standard_level' => ['required', 'integer', 'min:0'],
+            'reorder_level' => ['required', 'integer', 'min:0'],
             'unit_cost' => ['required', 'numeric', 'min:0'],
             'price' => ['required', 'numeric', 'min:0'],
             'weight' => ['nullable', 'numeric', 'min:0'],
@@ -127,7 +127,7 @@ class InventoryController extends Controller
             'name' => ['required', 'string'],
             'unit' => ['required', 'string'],
             'quantity' => ['required', 'integer', 'min:0'],
-            'standard_level' => ['required', 'integer', 'min:0'],
+            'reorder_level' => ['required', 'integer', 'min:0'],
             'unit_cost' => ['required', 'numeric', 'min:0'],
             'price' => ['required', 'numeric', 'min:0'],
             'weight' => ['nullable', 'numeric', 'min:0'],

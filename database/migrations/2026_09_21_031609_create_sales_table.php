@@ -12,7 +12,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->enum('status', ['pending', 'completed'])->default('pending');
             $table->decimal('cash_received', 10, 2);
             $table->decimal('change', 10, 2)->default(0);
             $table->text('notes')->nullable();

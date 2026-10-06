@@ -80,11 +80,11 @@ class PosController extends Controller
         } else {
             $cart[$product->id] = [
                 'product_id' => $product->id,
-                'item_code' => $product->item_code,
-                'name' => $product->name,
-                'price' => $product->price,
-                'quantity' => 1,
-                'available' => $product->quantity,
+                'item_code'  => $product->item_code,
+                'name'       => $product->name,
+                'price'      => $product->price,
+                'quantity'   => 1,
+                'available'  => $product->quantity,
             ];
         }
 
@@ -99,11 +99,16 @@ class PosController extends Controller
         $cart = session('cart', []);
 
         // ALWAYS SAVE NOTES, CUSTOMER INFO, AND CASH RECEIVED
-        session(['cart_notes' => $request->input('notes', '')]);
-        session(['cart_customer_name' => $request->input('customer_name', '')]);
-        session(['cart_customer_phone' => $request->input('customer_phone', '')]);
-        session(['cart_customer_address' => $request->input('customer_address', '')]);
-        session(['cart_cash_received' => $request->input('cash_received', '')]);
+        session(['cart_notes'             => $request->input('notes', '')]);
+        session(['cart_customer_name'     => $request->input('customer_name', '')]);
+        session(['cart_customer_phone'    => $request->input('customer_phone', '')]);
+        session(['cart_customer_address'  => $request->input('customer_address', '')]);
+        session(['cart_cash_received'     => $request->input('cash_received', '')]);
+
+        // CALCULATE CHANGE
+        if ($request->has('calculate_change')) {
+            return redirect()->route('pos.index');
+        }
 
         // INCREASE QUANTITY
         if ($request->has('increase')) {
@@ -151,9 +156,9 @@ class PosController extends Controller
             $customer = Customer::find($request->input('select_customer'));
 
             if ($customer) {
-                session(['cart_customer_id' => $customer->id]);
-                session(['cart_customer_name' => $customer->name]);
-                session(['cart_customer_phone' => $customer->phone_number]);
+                session(['cart_customer_id'      => $customer->id]);
+                session(['cart_customer_name'    => $customer->name]);
+                session(['cart_customer_phone'   => $customer->phone_number]);
                 session(['cart_customer_address' => $customer->address]);
             }
 
@@ -162,14 +167,14 @@ class PosController extends Controller
             return redirect()->route('pos.index');
         }
 
-        // CLEAR SELECTED CUSTOMER (START A NEW ONE)
+        // CLEAR SELECTED CUSTOMER
         if ($request->has('clear_customer')) {
             session()->forget(['cart_customer_id', 'customer_matches']);
 
             return redirect()->route('pos.index');
         }
 
-        // CHECKOUT (PENDING OR COMPLETED)
+        // CHECKOUT
         if ($request->has('checkout')) {
             return $this->checkout($request, $cart);
         }
@@ -191,16 +196,14 @@ class PosController extends Controller
 
         // VALIDATE CUSTOMER AND CASH INFO
         $validated = $request->validate([
-            'customer_name' => ['required', 'string'],
-            'customer_phone' => ['nullable', 'string'],
+            'customer_name'    => ['required', 'string'],
+            'customer_phone'   => ['nullable', 'string'],
             'customer_address' => ['required', 'string'],
-            'cash_received' => ['required', 'numeric', 'min:0'],
+            'cash_received'    => ['required', 'numeric', 'min:0'],
         ]);
 
-        $status = $request->input('checkout') === 'completed' ? 'completed' : 'pending';
-
-        // CASH MUST COVER THE TOTAL WHEN COMPLETING A SALE
-        if ($status === 'completed' && $validated['cash_received'] < $total) {
+        // CASH MUST COVER THE TOTAL
+        if ($validated['cash_received'] < $total) {
             return redirect()->route('pos.index')->with('error', 'Cash received is less than the total.');
         }
 
@@ -213,45 +216,42 @@ class PosController extends Controller
             $customer = Customer::find($customerId);
         } else {
             $customer = Customer::create([
-                'name' => $validated['customer_name'],
+                'name'         => $validated['customer_name'],
                 'phone_number' => $validated['customer_phone'] ?? null,
-                'address' => $validated['customer_address'],
+                'address'      => $validated['customer_address'],
             ]);
         }
 
         // CREATE THE SALE
         $sale = Sale::create([
-            'customer_id' => $customer->id,
-            'user_id' => Auth::id(),
-            'status' => $status,
-            'cash_received' => $validated['cash_received'],
-            'change' => $change,
-            'notes' => $request->input('notes'),
-            'total' => $total,
+            'customer_id'    => $customer->id,
+            'user_id'        => Auth::id(),
+            'cash_received'  => $validated['cash_received'],
+            'change'         => $change,
+            'notes'          => $request->input('notes'),
+            'total'          => $total,
         ]);
 
-        // CREATE SALE ITEMS AND DEDUCT INVENTORY IF COMPLETED
+        // CREATE SALE ITEMS AND DEDUCT INVENTORY
         foreach ($cart as $item) {
             SaleItem::create([
-                'sale_id' => $sale->id,
-                'product_id' => $item['product_id'],
+                'sale_id'   => $sale->id,
+                'product_id'=> $item['product_id'],
                 'item_code' => $item['item_code'],
                 'item_name' => $item['name'],
-                'quantity' => $item['quantity'],
-                'price' => $item['price'],
-                'subtotal' => $item['price'] * $item['quantity'],
+                'quantity'  => $item['quantity'],
+                'price'     => $item['price'],
+                'subtotal'  => $item['price'] * $item['quantity'],
             ]);
 
-            if ($status === 'completed') {
-                $product = Product::find($item['product_id']);
+            $product = Product::find($item['product_id']);
 
-                if ($product) {
-                    $product->decrement('quantity', $item['quantity']);
-                }
+            if ($product) {
+                $product->decrement('quantity', $item['quantity']);
             }
         }
 
-        // CLEAR THE CART AND CUSTOMER SESSION DATA
+        // CLEAR CART AND CUSTOMER SESSION DATA
         session()->forget([
             'cart',
             'cart_notes',
@@ -263,12 +263,8 @@ class PosController extends Controller
             'cart_cash_received',
         ]);
 
-        $message = $status === 'completed'
-            ? 'Sale completed successfully.'
-            : 'Transaction saved as pending.';
-
         return redirect()->route('pos.index')
-            ->with('success', $message)
+            ->with('success', 'Sale completed successfully.')
             ->with('receipt_url', route('receipts.show', $sale->id));
-        }
-}   
+    }
+}

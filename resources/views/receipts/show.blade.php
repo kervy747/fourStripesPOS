@@ -59,15 +59,9 @@
             <td class="right">{{ $sale->created_at->format('M d, Y h:i A') }}</td>
         </tr>
         <tr>
-            <td>Status</td>
-            <td class="right">
-                <span class="status-badge">{{ strtoupper($sale->status) }}</span>
-            </td>
-        </tr>
-        {{-- <tr>
             <td>Cashier</td>
-            <td class="right">{{ $sale->user->name ?? 'N/A' }}</td>
-        </tr> --}}
+            <td class="right">{{ $sale->user->getFullNameAttribute() ?? 'N/A' }}</td>
+        </tr>
     </table>
 
     <div class="divider"></div>

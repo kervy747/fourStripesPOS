@@ -53,10 +53,10 @@
         <x-error name="quantity" />
     </div>
 
-    {{-- STANDARD LEVEL --}}
+    {{-- REORDER LEVEL --}}
     <div>
-        <x-input label="Standard Level" name="standard_level" type="number" placeholder="5" :value="$product->standard_level ?? ''" />
-        <x-error name="standard_level" />
+        <x-input label="Reorder Level" name="reorder_level" type="number" placeholder="5" :value="$product->reorder_level ?? ''" />
+        <x-error name="reorder_level" />
     </div>
 
     {{-- UNIT COST --}}

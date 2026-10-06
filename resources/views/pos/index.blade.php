@@ -29,6 +29,61 @@
             {{-- LEFT: PRODUCT BROWSING --}}
             <div class="flex-1">
 
+                {{-- CUSTOMER --}}
+                <div class="mb-3">
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="block text-xs font-semibold text-neutral-700">Customer Name</label>
+                        @if($selectedCustomerId)
+                            <button type="submit" form="cart-form" name="clear_customer" value="1" class="text-xs text-brand-yellow-deep font-semibold">
+                                Search again
+                            </button>
+                        @endif
+                    </div>
+
+                    {{-- NAME + FIND --}}
+                    <div class="flex gap-2 mb-2">
+                        <input type="text" form="cart-form" name="customer_name" value="{{ $customerName }}" placeholder="Enter customer name..."
+                            class="flex-1 border border-neutral-200 rounded-lg py-2 px-3 text-sm"
+                            onkeydown="if(event.key === 'Enter'){ event.preventDefault(); }">
+                        @unless($selectedCustomerId)
+                            <button type="submit" form="cart-form" name="find_customer" value="1" class="bg-neutral-100 text-neutral-700 text-xs font-semibold px-3 rounded-lg">
+                                Find
+                            </button>
+                        @endunless
+                    </div>
+
+                    {{-- MATCHED CUSTOMERS --}}
+                    @if(!$selectedCustomerId && count($customerMatches) > 0)
+                        <div class="border border-neutral-200 rounded-lg mb-2 max-h-32 overflow-y-auto">
+                            @foreach($customerMatches as $match)
+                                <button type="submit" form="cart-form" name="select_customer" value="{{ $match['id'] }}"
+                                        class="w-full text-left px-3 py-2 text-xs border-b border-neutral-100 hover:bg-neutral-100">
+                                    <p class="font-semibold text-neutral-900">{{ $match['name'] }}</p>
+                                    <p class="text-neutral-500">{{ $match['phone_number'] ?? 'No phone on file' }}</p>
+                                    <p class="text-neutral-500">{{ $match['address'] }}</p>
+                                </button>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <div class="flex gap-2">
+                        {{-- PHONE (OPTIONAL) --}}
+                        <input type="text" form="cart-form" name="customer_phone" value="{{ $customerPhone }}" placeholder="Phone # (optional)"
+                            class="w-[35%] border border-neutral-200 rounded-lg py-2 px-3 text-sm"
+                            onkeydown="if(event.key === 'Enter'){ event.preventDefault(); }">
+
+                        {{-- ADDRESS (REQUIRED) --}}
+                        <input type="text" form="cart-form" name="customer_address" value="{{ $customerAddress }}" placeholder="Address"
+                            class="w-[65%] border border-neutral-200 rounded-lg py-2 px-3 text-sm"
+                            onkeydown="if(event.key === 'Enter'){ event.preventDefault(); }">
+                    </div>
+
+                    {{-- CUSTOMER ERRORS --}}
+                    <x-error name="customer_address" />
+                    <x-error name="customer_name" />
+
+                </div>
+
                 {{-- SEARCH --}}
                 <form method="GET" action="{{ route('pos.index') }}" class="mb-4">
                     <input type="hidden" name="category" value="{{ request('category') }}">

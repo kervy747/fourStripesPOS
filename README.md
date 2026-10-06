@@ -127,6 +127,8 @@ FourStripesPOS/
 │       │   ├── button.blade.php
 │       │   ├── input.blade.php
 │       │   ├── error.blade.php
+│       │   ├── alert.blade.php
+│       │   ├── select.blade.php
 │       │   └── ui/
 │       │       ├── table.blade.php
 │       │       ├── modal.blade.php
@@ -140,6 +142,7 @@ FourStripesPOS/
 │       │   │   ├── index.blade.php
 │       │   │   ├── create.blade.php
 │       │   │   └── edit.blade.php
+│       │   │   └── _form.blade.php
 │       │   └── audit-log/
 │       │       └── index.blade.php
 │       │

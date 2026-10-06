@@ -15,7 +15,7 @@ class Product extends Model
         'category',
         'unit',
         'quantity',
-        'standard_level',
+        'reorder_level',
         'unit_cost',
         'price',
         'weight',
@@ -29,7 +29,7 @@ class Product extends Model
             return 'out_of_stock';
         }
 
-        if ($this->quantity <= $this->standard_level) {
+        if ($this->quantity <= $this->reorder_level) {
             return 'low_stock';
         }
 

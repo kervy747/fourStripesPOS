@@ -40,7 +40,6 @@
                             <th class="text-left px-4 py-3">Customer</th>
                             <th class="text-left px-4 py-3">Items</th>
                             <th class="text-left px-4 py-3">Total</th>
-                            <th class="text-left px-4 py-3">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,13 +67,6 @@
                                 </td>
                                 <td class="px-4 py-3 font-semibold text-neutral-900">
                                     ₱ {{ number_format($sale->total, 2) }}
-                                </td>
-                                <td class="px-4 py-3">
-                                    @if($sale->status === 'pending')
-                                        <span class="bg-warning-tint text-warning text-xs font-heading font-semibold px-3 py-1 rounded-full">Pending</span>
-                                    @else
-                                        <span class="bg-success-tint text-success text-xs font-heading font-semibold px-3 py-1 rounded-full">Completed</span>
-                                    @endif
                                 </td>
                             </tr>
                         @empty
@@ -119,12 +111,10 @@
                         <span class="text-neutral-600">Customer Name</span>
                         <span class="font-semibold text-neutral-900">{{ $selectedSale->customer->name ?? '—' }}</span>
                     </div>
-                    @if ($selectedSale->status === 'completed')
-                        <div class="flex justify-between">
-                            <span class="text-neutral-600">Processed By</span>
-                            <span class="font-semibold text-neutral-900">{{ $selectedSale->user->full_name ?? '—' }}</span>
-                        </div>
-                    @endif
+                    <div class="flex justify-between">
+                        <span class="text-neutral-600">Processed By</span>
+                        <span class="font-semibold text-neutral-900">{{ $selectedSale->user->getFullNameAttribute() ?? '—' }}</span>
+                    </div>
                 </div>
 
                 {{-- ITEMIZED BREAKDOWN --}}

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->enum('category', ['machines', 'tools', 'accessories']);
             $table->string('unit')->default('unit');
             $table->integer('quantity')->default(0);
-            $table->integer('standard_level')->default(5);
+            $table->integer('reorder_level')->default(5);
             $table->decimal('unit_cost', 10, 2)->default(0);
             $table->decimal('price', 10, 2);
             $table->decimal('weight', 8, 2)->nullable();
