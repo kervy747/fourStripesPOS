@@ -122,8 +122,8 @@
                                 "
                                 class="absolute inset-y-0 right-0 flex items-center pr-3"
                             >
-                                <img id="eye-show" src="{{ asset('images/icons/grey-eyes.svg') }}" class="w-4 h-4" alt="Show password">
-                                <img id="eye-hide" src="{{ asset('images/icons/grey-eye-hide.svg') }}" class="w-4 h-4 hidden" alt="Hide password">
+                                <img id="eye-show" src="{{ asset('images/icons/black-show.svg') }}" class="w-4 h-5" alt="Show password">
+                                <img id="eye-hide" src="{{ asset('images/icons/black-eye-hide.svg') }}" class="w-4 h-5 hidden" alt="Hide password">
                             </button>
 
                         </div>
