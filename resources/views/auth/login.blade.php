@@ -68,7 +68,7 @@
                 <div class="w-10 h-1 bg-brand-yellow mt-3 mb-4"></div>
 
                 {{-- LOGIN FORM --}}
-                <form method="POST" action="{{ route('login.attempt') }}" class="space-y-4">
+                <form method="POST" action="{{ route('login.attempt') }}"   autocomplete="new-password" class="space-y-4">
                     @csrf
 
                     {{-- USERNAME (EMAIL) FIELD --}}
@@ -83,11 +83,50 @@
 
                     {{-- PASSWORD FIELD --}}
                     <div>
-                        <x-input label="Password" name="password" type="password" placeholder="Enter your password">
-                            <x-slot:icon>
+                        <label for="password" class="block text-sm font-semibold text-neutral-900 mb-1 font-body">
+                            Password
+                        </label>
+                        <div class="relative">
+
+                            {{-- LOCK ICON (LEFT) --}}
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 text-neutral-600">
                                 <img src="{{ asset('images/icons/grey-lock.svg') }}" class="w-4 h-4" alt="">
-                            </x-slot:icon>
-                        </x-input>
+                            </div>
+
+                            {{-- INPUT --}}
+                            <input
+                                type="password"
+                                name="password"
+                                id="password"
+                                placeholder="Enter your password"
+                                autocomplete="new-password"
+                                class="w-full border border-neutral-200 bg-neutral-100 rounded-lg py-3 pl-10 pr-10 text-sm font-body text-neutral-900 focus:outline-none focus:ring-2 focus:ring-brand-yellow"
+                            >
+
+                            {{-- TOGGLE BUTTON (RIGHT) --}}
+                            <button
+                                type="button"
+                                onclick="
+                                    var input = document.getElementById('password');
+                                    var showIcon = document.getElementById('eye-show');
+                                    var hideIcon = document.getElementById('eye-hide');
+                                    if (input.type === 'password') {
+                                        input.type = 'text';
+                                        showIcon.classList.add('hidden');
+                                        hideIcon.classList.remove('hidden');
+                                    } else {
+                                        input.type = 'password';
+                                        showIcon.classList.remove('hidden');
+                                        hideIcon.classList.add('hidden');
+                                    }
+                                "
+                                class="absolute inset-y-0 right-0 flex items-center pr-3"
+                            >
+                                <img id="eye-show" src="{{ asset('images/icons/grey-eyes.svg') }}" class="w-4 h-4" alt="Show password">
+                                <img id="eye-hide" src="{{ asset('images/icons/grey-eye-hide.svg') }}" class="w-4 h-4 hidden" alt="Hide password">
+                            </button>
+
+                        </div>
                         <x-error name="password" />
                     </div>
 
