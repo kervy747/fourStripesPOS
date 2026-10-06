@@ -8,6 +8,7 @@ use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\BackupController;
 
 // ROOT REDIRECT
 Route::get('/', function () {
@@ -50,6 +51,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports', function () {
         return view('reports.index');
     })->name('reports.index');
+
+    //BACKUP
+    Route::get('/backup', [BackupController::class, 'index'])->name('backup.index');
 
     // ADMIN ONLY ROUTES
     Route::group(['middleware' => function ($request, $next) {

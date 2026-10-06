@@ -18,11 +18,6 @@
     {{-- USER INFO --}}
     <div class="flex items-center gap-5">
 
-        {{-- DATE TIME --}}
-        <span class="text-sm text-neutral-600">
-            {{ now()->format('M d, Y  h:i A') }}
-        </span>
-
         {{-- PROFILE --}}
         <div class="flex items-center gap-2">
             <div class="w-9 h-9 rounded-full bg-neutral-200 flex items-center justify-center font-semibold text-neutral-700">

@@ -78,31 +78,22 @@ FourStripesPOS/
 │   │   ├── ShippingZone.php
 │   │   └── AuditLog.php
 │   │
-│   ├── Http/
-│   │   ├── Controllers/
-│   │   │   ├── Auth/
-│   │   │   │   └── LoginController.php
-│   │   │   │
-│   │   │   ├── Admin/
-│   │   │   │   ├── UserManagementController.php
-│   │   │   │   └── AuditLogController.php
-│   │   │   │
-│   │   │   ├── Staff/
-│   │   │   │   └── (staff shares controllers below, gated by middleware)
-│   │   │   │
-│   │   │   ├── PosController.php
-│   │   │   ├── InventoryController.php
-│   │   │   ├── SaleController.php
-│   │   │   ├── ReportController.php
-│   │   │   └── ReceiptController.php
-│   │   │
-│   │   └── Middleware/
-│   │       ├── IsAdmin.php
-│   │       └── LogsActivity.php
-│   │
-│   └── Services/
-│       ├── ShippingCalculator.php
-│       └── PdfReportGenerator.php
+│   └── Http/
+│       └── Controllers/
+│           ├── Auth/
+│           │   └── LoginController.php
+│           ├── Admin/
+│           │   ├── UserManagementController.php
+│           │
+│           ├── Staff/
+│           │   └── (staff shares controllers below, gated by middleware)
+│           │
+│           ├── PosController.php
+│           ├── AuditLogController.php
+│           ├── InventoryController.php
+│           ├── SaleController.php
+│           ├── ReportController.php
+│           └── ReceiptController.php
 │
 ├── database/
 │   ├── migrations/
