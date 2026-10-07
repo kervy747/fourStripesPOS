@@ -34,6 +34,7 @@
                                 name="quantity[{{ $item['product_id'] }}]"
                                 value="{{ $item['quantity'] }}"
                                 min="1"
+                                max="{{ $item['available'] }}"
                                 class="w-12 text-center text-sm border border-neutral-200 rounded
                                     [appearance:textfield]
                                     [&::-webkit-outer-spin-button]:appearance-none
@@ -75,13 +76,17 @@
                 @endif
             </div>
         @endif
-        @if(session('info'))
-            <div class="bg-info-tint text-info p-3 rounded-lg mb-4 text-sm">{{ session('info') }}</div>
+
+        @if(session('cart_warning'))
+            <div class="bg-warning-tint text-warning p-3 rounded-lg mb-4 text-sm">
+                {{ session('cart_warning') }}
+            </div>
         @endif
+
         @if(session('error'))
             <div class="bg-danger-tint text-danger p-3 rounded-lg mb-4 text-sm">{{ session('error') }}</div>
         @endif
-        
+
         {{-- TOTAL --}}
         <div class="border-t border-neutral-200 pt-3 mb-4">
             <div class="flex justify-between text-base font-bold text-neutral-900">
@@ -107,6 +112,7 @@
                     placeholder="0.00"
                     class="flex-1 border border-neutral-200 rounded-lg py-2 px-3 text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     oninput="calculateChange()"
+                    onkeydown="if(event.key === 'Enter'){ event.preventDefault(); }"
                 >
             </div>
 

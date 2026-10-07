@@ -8,22 +8,6 @@
         {{-- LEFT: TRANSACTIONS --}}
         <div class="flex-1 p-6 overflow-y-auto">
 
-            {{-- STATUS TABS --}}
-            <div class="flex items-center gap-2 mb-4">
-                <a href="{{ route('sales.index', array_merge(request()->except(['status', 'page']), ['status' => 'all'])) }}"
-                   class="font-heading font-semibold text-sm px-5 py-2 rounded-full {{ $status === 'all' ? 'bg-brand-yellow text-brand-black' : 'bg-neutral-0 text-neutral-700 border border-neutral-200' }}">
-                    All Transactions
-                </a>
-                <a href="{{ route('sales.index', array_merge(request()->except(['status', 'page']), ['status' => 'pending'])) }}"
-                   class="font-heading font-semibold text-sm px-5 py-2 rounded-full {{ $status === 'pending' ? 'bg-brand-yellow text-brand-black' : 'bg-neutral-0 text-neutral-700 border border-neutral-200' }}">
-                    Pending
-                </a>
-                <a href="{{ route('sales.index', array_merge(request()->except(['status', 'page']), ['status' => 'completed'])) }}"
-                   class="font-heading font-semibold text-sm px-5 py-2 rounded-full {{ $status === 'completed' ? 'bg-brand-yellow text-brand-black' : 'bg-neutral-0 text-neutral-700 border border-neutral-200' }}">
-                    Completed
-                </a>
-            </div>
-
             {{-- SEARCH --}}
             <form method="GET" action="{{ route('sales.index') }}" class="mb-4">
                 <input type="hidden" name="status" value="{{ $status }}">

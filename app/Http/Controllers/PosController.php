@@ -35,14 +35,14 @@ class PosController extends Controller
         $products = $query->orderBy('item_code')->paginate(8)->withQueryString();
 
         // GET CART AND CUSTOMER INFO FROM SESSION
-        $cart = session('cart', []);
-        $notes = session('cart_notes', '');
-        $customerName = session('cart_customer_name', '');
-        $customerPhone = session('cart_customer_phone', '');
+        $cart            = session('cart', []);
+        $notes           = session('cart_notes', '');
+        $customerName    = session('cart_customer_name', '');
+        $customerPhone   = session('cart_customer_phone', '');
         $customerAddress = session('cart_customer_address', '');
         $selectedCustomerId = session('cart_customer_id');
         $customerMatches = session('customer_matches', []);
-        $cashReceived = session('cart_cash_received', '');
+        $cashReceived    = session('cart_cash_received', '');
 
         // CALCULATE TOTAL
         $total = collect($cart)->sum(function ($item) {
@@ -72,13 +72,40 @@ class PosController extends Controller
     {
         // FIND EXISTING CUSTOMER BY NAME
         if ($request->has('find_customer')) {
-            $name = $request->input('customer_name');
+            $name = trim($request->input('customer_name', ''));
+
+            // SAVE PHONE, ADDRESS, AND CASH TO SESSION
+            // Do NOT save the search name here — it would overwrite a previously confirmed customer
+            // name if no match is found. The typed name is preserved via withInput() instead.
+            session(['cart_customer_phone'   => $request->input('customer_phone', '')]);
+            session(['cart_customer_address' => $request->input('customer_address', '')]);
+            session(['cart_cash_received'    => $request->input('cash_received', '')]);
+
+            if ($name === '') {
+                session()->forget(['cart_customer_id', 'customer_matches']);
+
+                return redirect()
+                    ->route('pos.index')
+                    ->withInput()
+                    ->withErrors(['customer_name' => 'Please enter a customer name to search.']);
+            }
 
             $matches = Customer::where('name', 'like', "%{$name}%")->get();
 
+            if ($matches->isEmpty()) {
+                session()->forget('customer_matches');
+
+                // withInput() echoes the typed name back into the field without overwriting session
+                return redirect()
+                    ->route('pos.index')
+                    ->withInput()
+                    ->with('customer_not_found', true);
+            }
+
             session(['customer_matches' => $matches->toArray()]);
 
-            return redirect()->route('pos.index');
+            // Keep the typed name visible while staff picks from the match list
+            return redirect()->route('pos.index')->withInput();
         }
 
         // SELECT A MATCHED CUSTOMER
@@ -104,16 +131,27 @@ class PosController extends Controller
             return redirect()->route('pos.index');
         }
     }
-    
+
     // ADD PRODUCT TO CART
-    public function add(Product $product)
+    public function add(Request $request, Product $product)
     {
+        // PRESERVE CUSTOMER FIELDS AND CASH FROM HIDDEN INPUTS IN PRODUCT FORMS
+        if ($request->filled('customer_name')) {
+            session(['cart_customer_name'    => $request->input('customer_name', '')]);
+        }
+        session(['cart_customer_phone'   => $request->input('customer_phone', '')]);
+        session(['cart_customer_address' => $request->input('customer_address', '')]);
+        session(['cart_cash_received'    => $request->input('cash_received', '')]);
+
         $cart = session('cart', []);
 
         if (isset($cart[$product->id])) {
             // DO NOT EXCEED AVAILABLE STOCK
             if ($cart[$product->id]['quantity'] < $product->quantity) {
                 $cart[$product->id]['quantity']++;
+            } else {
+                session(['cart' => $cart]);
+                return redirect()->back()->with('cart_warning', "Stock limit reached for \"{$product->name}\" — only {$product->quantity} available.");
             }
         } else {
             $cart[$product->id] = [
@@ -137,23 +175,32 @@ class PosController extends Controller
         $cart = session('cart', []);
 
         // ALWAYS SAVE NOTES, CUSTOMER INFO, AND CASH RECEIVED
-        session(['cart_notes'             => $request->input('notes', '')]);
-        session(['cart_customer_name'     => $request->input('customer_name', '')]);
-        session(['cart_customer_phone'    => $request->input('customer_phone', '')]);
-        session(['cart_customer_address'  => $request->input('customer_address', '')]);
-        session(['cart_cash_received'     => $request->input('cash_received', '')]);
-
-        // CALCULATE CHANGE
-        if ($request->has('calculate_change')) {
-            return redirect()->route('pos.index');
+        // Skip customer_name if the field was disabled (selected customer) — disabled inputs
+        // are not submitted, so $request->filled() will be false and we keep the session value.
+        session(['cart_notes'         => $request->input('notes', '')]);
+        session(['cart_cash_received' => $request->input('cash_received', '')]);
+        if ($request->filled('customer_name')) {
+            session(['cart_customer_name' => $request->input('customer_name')]);
+        }
+        if ($request->filled('customer_phone') || !session('cart_customer_id')) {
+            session(['cart_customer_phone' => $request->input('customer_phone', '')]);
+        }
+        if ($request->filled('customer_address') || !session('cart_customer_id')) {
+            session(['cart_customer_address' => $request->input('customer_address', '')]);
         }
 
         // INCREASE QUANTITY
         if ($request->has('increase')) {
             $id = (int) $request->input('increase');
 
-            if (isset($cart[$id]) && $cart[$id]['quantity'] < $cart[$id]['available']) {
-                $cart[$id]['quantity']++;
+            if (isset($cart[$id])) {
+                if ($cart[$id]['quantity'] < $cart[$id]['available']) {
+                    $cart[$id]['quantity']++;
+                } else {
+                    session(['cart' => $cart]);
+                    return redirect()->route('pos.index')
+                        ->with('cart_warning', "Stock limit reached for \"{$cart[$id]['name']}\" — only {$cart[$id]['available']} available.");
+                }
             }
         }
 
@@ -177,20 +224,23 @@ class PosController extends Controller
             !$request->has('decrease')
         ) {
             foreach ($request->input('quantity') as $id => $quantity) {
-                $id = (int) $id;
+                $id       = (int) $id;
                 $quantity = (int) $quantity;
 
                 if (isset($cart[$id])) {
-                    $quantity = max(1, min($quantity, $cart[$id]['available']));
-                    $cart[$id]['quantity'] = $quantity;
+                    $capped = max(1, min($quantity, $cart[$id]['available']));
+
+                    if ($quantity > $cart[$id]['available']) {
+                        session(['cart' => $cart]);
+                        $cart[$id]['quantity'] = $capped;
+                        session(['cart' => $cart]);
+                        return redirect()->route('pos.index')
+                            ->with('cart_warning', "Quantity capped at {$cart[$id]['available']} for \"{$cart[$id]['name']}\" — that's all that's in stock.");
+                    }
+
+                    $cart[$id]['quantity'] = $capped;
                 }
             }
-        }          
-
-        // REMOVE ITEM
-        if ($request->has('remove')) {
-            $id = (int) $request->input('remove');
-            unset($cart[$id]);
         }
 
         session(['cart' => $cart]);
@@ -245,24 +295,24 @@ class PosController extends Controller
 
         // CREATE THE SALE
         $sale = Sale::create([
-            'customer_id'    => $customer->id,
-            'user_id'        => Auth::id(),
-            'cash_received'  => $validated['cash_received'],
-            'change'         => $change,
-            'notes'          => $request->input('notes'),
-            'total'          => $total,
+            'customer_id'   => $customer->id,
+            'user_id'       => Auth::id(),
+            'cash_received' => $validated['cash_received'],
+            'change'        => $change,
+            'notes'         => $request->input('notes'),
+            'total'         => $total,
         ]);
 
         // CREATE SALE ITEMS AND DEDUCT INVENTORY
         foreach ($cart as $item) {
             SaleItem::create([
-                'sale_id'   => $sale->id,
-                'product_id'=> $item['product_id'],
-                'item_code' => $item['item_code'],
-                'item_name' => $item['name'],
-                'quantity'  => $item['quantity'],
-                'price'     => $item['price'],
-                'subtotal'  => $item['price'] * $item['quantity'],
+                'sale_id'    => $sale->id,
+                'product_id' => $item['product_id'],
+                'item_code'  => $item['item_code'],
+                'item_name'  => $item['name'],
+                'quantity'   => $item['quantity'],
+                'price'      => $item['price'],
+                'subtotal'   => $item['price'] * $item['quantity'],
             ]);
 
             $product = Product::find($item['product_id']);

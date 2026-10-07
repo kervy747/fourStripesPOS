@@ -4,6 +4,18 @@
 
     <main class="p-6 flex-1">
 
+        {{--
+            This hidden button must be the very first submit button in the DOM that is
+            associated with cart-form. The Find button below also has form="cart-form",
+            but since this button appears earlier in the HTML, pressing Enter inside any
+            cart-form field (like a quantity input) activates this button instead of Find.
+            It has no name, so updateCart runs the quantity-update logic and nothing else.
+        --}}
+        <button type="submit" form="cart-form"
+                style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;"
+                tabindex="-1">
+        </button>
+
         <div class="flex flex-col lg:flex-row gap-4">
 
             {{-- LEFT: PRODUCT BROWSING --}}
@@ -29,9 +41,10 @@
                                     type="text"
                                     form="cart-form"
                                     name="customer_name"
-                                    value="{{ $customerName }}"
+                                    value="{{ old('customer_name', $customerName) }}"
                                     placeholder="Enter customer name or company name..."
-                                    class="flex-1 text-sm focus:outline-none"
+                                    class="flex-1 text-sm focus:outline-none {{ $selectedCustomerId ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                    {{ $selectedCustomerId ? 'disabled' : '' }}
                                     onkeydown="if(event.key === 'Enter'){ event.preventDefault(); }">
                             </div>
 
@@ -65,16 +78,18 @@
                             {{-- PHONE (OPTIONAL) --}}
                             <div class="w-[35%] flex h-10 items-center flex-1 bg-white border-2 border-neutral-300 rounded-lg py-2 px-3 gap-2 focus-within:border-black">
                                 <img src="{{ asset('images/icons/black-phone.svg') }}" alt="phone" class="w-4 h-4 opacity-60">
-                                <input type="text" form="cart-form" name="customer_phone" value="{{ $customerPhone }}" placeholder="Phone # (optional)"
-                                class="w-full bg-white rounded-lg text-sm focus:outline-none"
+                                <input type="text" form="cart-form" name="customer_phone" value="{{ old('customer_phone', $customerPhone) }}" placeholder="Phone # (optional)"
+                                class="w-full bg-white rounded-lg text-sm focus:outline-none {{ $selectedCustomerId ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                {{ $selectedCustomerId ? 'disabled' : '' }}
                                 onkeydown="if(event.key === 'Enter'){ event.preventDefault(); }">
                             </div>
 
                             {{-- ADDRESS (REQUIRED) --}}
                             <div class="w-[65%] flex h-10 items-center flex-1 bg-white border-2 border-neutral-300 rounded-lg py-2 px-3 gap-2 focus-within:border-black">
                                 <img src="{{ asset('images/icons/black-location.svg') }}" alt="location" class="w-4 h-4 opacity-60">
-                                 <input type="text" form="cart-form" name="customer_address" value="{{ $customerAddress }}" placeholder="Address"
-                                class="w-full bg-white rounded-lg text-sm focus:outline-none"
+                                 <input type="text" form="cart-form" name="customer_address" value="{{ old('customer_address', $customerAddress) }}" placeholder="Address"
+                                class="w-full bg-white rounded-lg text-sm focus:outline-none {{ $selectedCustomerId ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                {{ $selectedCustomerId ? 'disabled' : '' }}
                                 onkeydown="if(event.key === 'Enter'){ event.preventDefault(); }">
                             </div>
                         </div>
@@ -82,6 +97,13 @@
                         {{-- CUSTOMER ERRORS --}}
                         <x-error name="customer_address" />
                         <x-error name="customer_name" />
+
+                        {{-- CUSTOMER NOT FOUND --}}
+                        @if(session('customer_not_found'))
+                            <div class="mt-2 bg-warning-tint text-warning text-xs font-semibold px-3 py-2 rounded-lg">
+                                No customers found matching that name. You can still continue — a new customer will be created at checkout.
+                            </div>
+                        @endif
 
                         {{-- MATCHED CUSTOMERS --}}
                         @if(!$selectedCustomerId && count($customerMatches) > 0)
@@ -154,8 +176,19 @@
 
                         {{-- PRODUCTS --}}
                         @forelse($products as $product)
+                            {{--
+                                Hidden customer/cash fields are included here so that when staff clicks
+                                a product to add it to the cart, whatever was already saved in session
+                                (customer name, phone, address, cash) is not wiped out.
+                                Note: values typed in the cart form but not yet submitted will still be
+                                lost — staff should save/find the customer before browsing products.
+                            --}}
                             <form method="POST" action="{{ route('pos.add', $product) }}">
                                 @csrf
+                                <input type="hidden" name="customer_name"    value="{{ $customerName }}">
+                                <input type="hidden" name="customer_phone"   value="{{ $customerPhone }}">
+                                <input type="hidden" name="customer_address" value="{{ $customerAddress }}">
+                                <input type="hidden" name="cash_received"    value="{{ $cashReceived }}">
 
                                 <button type="submit"
                                     @if($product->quantity == 0) disabled @endif
