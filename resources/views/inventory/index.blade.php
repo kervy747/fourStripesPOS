@@ -124,7 +124,6 @@
                         <th class="p-3">Item Name</th>
                         <th class="p-3">Category</th>
                         <th class="p-3">Stock Qty</th>
-                        <th class="p-3">Unit</th>
                         <th class="p-3">Reorder Level</th>
                         <th class="p-3">Unit Cost</th>
                         <th class="p-3">Selling Price</th>
@@ -139,8 +138,7 @@
                             <td class="p-3 font-semibold text-neutral-900">{{ $product->name }}</td>
                             <td class="p-3 text-neutral-600 capitalize">{{ $product->category }}</td>
                             <td class="p-3 text-neutral-900">{{ $product->quantity }}</td>
-                            <td class="p-3 text-neutral-600">{{ $product->unit }}</td>
-                            <td class="p-3 text-neutral-600">{{ $product->reeorder_level }}</td>
+                            <td class="p-3 text-neutral-600">{{ $product->reorder_level }}</td>
                             <td class="p-3 text-neutral-900">&#8369; {{ number_format($product->unit_cost, 2) }}</td>
                             <td class="p-3 text-neutral-900">&#8369; {{ number_format($product->price, 2) }}</td>
                             <td class="p-3">
@@ -160,7 +158,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="10" class="p-6 text-center text-neutral-500">
+                            <td colspan="9" class="p-6 text-center text-neutral-500">
                                 No items found.
                             </td>
                         </tr>

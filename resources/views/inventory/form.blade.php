@@ -41,12 +41,6 @@
         @endif
     </div>
 
-    {{-- UNIT --}}
-    <div>
-        <x-input label="Unit" name="unit" placeholder="e.g. unit, piece, pair" :value="$product->unit ?? ''" />
-        <x-error name="unit" />
-    </div>
-
     {{-- STOCK QUANTITY --}}
     <div>
         <x-input label="Stock Quantity" name="quantity" type="number" placeholder="0" :value="$product->quantity ?? ''" />
@@ -69,23 +63,6 @@
     <div>
         <x-input label="Selling Price" name="price" type="number" placeholder="0.00" :value="$product->price ?? ''" />
         <x-error name="price" />
-    </div>
-
-    {{-- WEIGHT --}}
-    <div>
-        <x-input label="Weight (kg)" name="weight" type="number" placeholder="For shipping calculation" :value="$product->weight ?? ''" />
-        <x-error name="weight" />
-    </div>
-
-    {{-- WARRANTY --}}
-    <div class="flex items-center gap-2 mt-6 md:mt-7">
-        <input type="checkbox" name="has_warranty" id="has_warranty" value="1"
-               @checked(old('has_warranty', isset($product) && $product->warranty_months) )
-               class="rounded border-neutral-400">
-        <label for="has_warranty" class="text-sm font-body text-neutral-900">
-            Motor Part (1 Month Warranty)
-        </label>
-        <x-error name="has_warranty" />
     </div>
 
 </div>

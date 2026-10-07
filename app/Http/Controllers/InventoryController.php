@@ -69,17 +69,12 @@ class InventoryController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string'],
             'category' => ['required', 'in:machines,tools,accessories'],
-            'unit' => ['required', 'string'],
             'quantity' => ['required', 'integer', 'min:0'],
             'reorder_level' => ['required', 'integer', 'min:0'],
             'unit_cost' => ['required', 'numeric', 'min:0'],
             'price' => ['required', 'numeric', 'min:0'],
-            'weight' => ['nullable', 'numeric', 'min:0'],
             'description' => ['nullable', 'string'],
         ]);
-
-        // WARRANTY IS ALWAYS EXACTLY 1 MONTH OR NONE
-        $validated['warranty_months'] = $request->boolean('has_warranty') ? 1 : null;
 
         // AUTO-GENERATE ITEM CODE BASED ON CATEGORY
         $validated['item_code'] = $this->generateItemCode($validated['category']);
@@ -125,17 +120,12 @@ class InventoryController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string'],
-            'unit' => ['required', 'string'],
             'quantity' => ['required', 'integer', 'min:0'],
             'reorder_level' => ['required', 'integer', 'min:0'],
             'unit_cost' => ['required', 'numeric', 'min:0'],
             'price' => ['required', 'numeric', 'min:0'],
-            'weight' => ['nullable', 'numeric', 'min:0'],
             'description' => ['nullable', 'string'],
         ]);
-
-        // WARRANTY IS ALWAYS EXACTLY 1 MONTH OR NONE
-        $validated['warranty_months'] = $request->boolean('has_warranty') ? 1 : null;
 
         // ITEM CODE AND CATEGORY STAY FIXED, NOT INCLUDED IN UPDATE
         $product->update($validated);

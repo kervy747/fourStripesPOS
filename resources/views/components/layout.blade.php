@@ -12,7 +12,7 @@
 </head>
 <body class="bg-neutral-100 font-body select-none">
 
-    <div class="flex min-h-screen">
+    <div class="flex h-screen overflow-hidden">
 
         {{-- SIDEBAR --}}
         @if(!$guest)
@@ -20,7 +20,7 @@
         @endif
 
         {{-- MAIN CONTENT --}}
-        <div class="flex-1 flex flex-col">
+        <div class="flex-1 flex flex-col overflow-y-auto">
             {{ $slot }}
         </div>
 

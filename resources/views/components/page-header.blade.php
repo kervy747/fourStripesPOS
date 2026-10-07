@@ -1,12 +1,12 @@
 @props(['title' => 'Dashboard', 'subtitle' => ''])
 
-<div class="bg-neutral-0 border-b border-neutral-200 px-6 py-4 flex items-center justify-between">
+<div class="sticky top-0 z-10 bg-neutral-0 border-b border-neutral-200 px-6 py-4 flex items-center justify-between">
 
     {{-- PAGE TITLE --}}
     <div class="flex items-center gap-4">
-        <button class="text-neutral-700 text-xl">
+        {{-- <button class="text-neutral-700 text-xl">
             <img src="{{ asset('images/icons/grey-menu.svg') }}" class="w-5 h-5" alt="Menu">
-        </button>
+        </button> --}}
         <div>
             <h1 class="font-heading font-bold text-xl text-neutral-900">{{ $title }}</h1>
             @if($subtitle)

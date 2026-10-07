@@ -13,13 +13,10 @@ class Product extends Model
         'item_code',
         'name',
         'category',
-        'unit',
         'quantity',
         'reorder_level',
         'unit_cost',
         'price',
-        'weight',
-        'warranty_months',
         'description',
     ];
 

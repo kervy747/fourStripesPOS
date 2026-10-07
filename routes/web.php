@@ -31,6 +31,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
     Route::post('/pos/add/{product}', [PosController::class, 'add'])->name('pos.add');
     Route::post('/pos/cart/update', [PosController::class, 'updateCart'])->name('pos.cart.update');
+    Route::post('/pos/customer-update', [PosController::class, 'customerUpdate'])->name('pos.customer.update');
 
     // RECEIPTS
     Route::get('/receipts/{sale}', [ReceiptController::class, 'show'])->name('receipts.show');

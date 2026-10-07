@@ -32,7 +32,7 @@ class PosController extends Controller
         }
 
         // PAGINATED PRODUCT LIST
-        $products = $query->orderBy('item_code')->paginate(10)->withQueryString();
+        $products = $query->orderBy('item_code')->paginate(8)->withQueryString();
 
         // GET CART AND CUSTOMER INFO FROM SESSION
         $cart = session('cart', []);
@@ -67,6 +67,44 @@ class PosController extends Controller
         ));
     }
 
+    // CUSTOMER UPDATE
+    public function customerUpdate(Request $request)
+    {
+        // FIND EXISTING CUSTOMER BY NAME
+        if ($request->has('find_customer')) {
+            $name = $request->input('customer_name');
+
+            $matches = Customer::where('name', 'like', "%{$name}%")->get();
+
+            session(['customer_matches' => $matches->toArray()]);
+
+            return redirect()->route('pos.index');
+        }
+
+        // SELECT A MATCHED CUSTOMER
+        if ($request->has('select_customer')) {
+            $customer = Customer::find($request->input('select_customer'));
+
+            if ($customer) {
+                session(['cart_customer_id'      => $customer->id]);
+                session(['cart_customer_name'    => $customer->name]);
+                session(['cart_customer_phone'   => $customer->phone_number]);
+                session(['cart_customer_address' => $customer->address]);
+            }
+
+            session()->forget('customer_matches');
+
+            return redirect()->route('pos.index');
+        }
+
+        // CLEAR SELECTED CUSTOMER
+        if ($request->has('clear_customer')) {
+            session()->forget(['cart_customer_id', 'customer_matches']);
+
+            return redirect()->route('pos.index');
+        }
+    }
+    
     // ADD PRODUCT TO CART
     public function add(Product $product)
     {
@@ -132,6 +170,23 @@ class PosController extends Controller
             }
         }
 
+        // UPDATE TYPED QUANTITY
+        if (
+            $request->has('quantity') &&
+            !$request->has('increase') &&
+            !$request->has('decrease')
+        ) {
+            foreach ($request->input('quantity') as $id => $quantity) {
+                $id = (int) $id;
+                $quantity = (int) $quantity;
+
+                if (isset($cart[$id])) {
+                    $quantity = max(1, min($quantity, $cart[$id]['available']));
+                    $cart[$id]['quantity'] = $quantity;
+                }
+            }
+        }          
+
         // REMOVE ITEM
         if ($request->has('remove')) {
             $id = (int) $request->input('remove');
@@ -139,40 +194,6 @@ class PosController extends Controller
         }
 
         session(['cart' => $cart]);
-
-        // FIND EXISTING CUSTOMER BY NAME
-        if ($request->has('find_customer')) {
-            $name = $request->input('customer_name');
-
-            $matches = Customer::where('name', 'like', "%{$name}%")->get();
-
-            session(['customer_matches' => $matches->toArray()]);
-
-            return redirect()->route('pos.index');
-        }
-
-        // SELECT A MATCHED CUSTOMER
-        if ($request->has('select_customer')) {
-            $customer = Customer::find($request->input('select_customer'));
-
-            if ($customer) {
-                session(['cart_customer_id'      => $customer->id]);
-                session(['cart_customer_name'    => $customer->name]);
-                session(['cart_customer_phone'   => $customer->phone_number]);
-                session(['cart_customer_address' => $customer->address]);
-            }
-
-            session()->forget('customer_matches');
-
-            return redirect()->route('pos.index');
-        }
-
-        // CLEAR SELECTED CUSTOMER
-        if ($request->has('clear_customer')) {
-            session()->forget(['cart_customer_id', 'customer_matches']);
-
-            return redirect()->route('pos.index');
-        }
 
         // CHECKOUT
         if ($request->has('checkout')) {

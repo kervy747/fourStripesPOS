@@ -40,13 +40,6 @@
             Reports
         </a>
 
-        {{-- BACKUP --}}
-        <a href="{{ route('backup.index') }}"
-           class="flex items-center gap-3 px-4 py-3 rounded-lg {{ $active === 'backup' ? 'bg-brand-yellow text-brand-black font-semibold' : 'text-neutral-200 hover:bg-neutral-900' }}">
-            <img src="{{ asset('images/icons/' . ($active === 'backup' ? 'black-backup.svg' : 'white-backup.svg')) }}" class="w-5 h-5" alt="">
-            Backup
-        </a>
-
         {{-- ADMIN ONLY LINKS --}}
         @if(auth()->user()?->isAdmin())
 
@@ -66,6 +59,12 @@
 
         @endif
 
+        {{-- BACKUP --}}
+        <a href="{{ route('backup.index') }}"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg {{ $active === 'backup' ? 'bg-brand-yellow text-brand-black font-semibold' : 'text-neutral-200 hover:bg-neutral-900' }}">
+            <img src="{{ asset('images/icons/' . ($active === 'backup' ? 'black-backup.svg' : 'white-backup.svg')) }}" class="w-5 h-5" alt="">
+            Backup
+        </a>
     </nav>
 
     {{-- LOGOUT --}}

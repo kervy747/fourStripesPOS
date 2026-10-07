@@ -52,16 +52,4 @@ class SalesController extends Controller
             'status' => $status,
         ]);
     }
-
-    // MARK A PENDING SALE AS COMPLETED
-    public function markCompleted(Sale $sale)
-    {
-        // WHOEVER CLICKS THE BUTTON IS RECORDED AS THE ONE WHO PROCESSED IT
-        $sale->update([
-            'status' => 'completed',
-            'user_id' => Auth::id(),
-        ]);
-
-        return redirect()->route('sales.index', ['selected' => $sale->id]);
-    }
 }
