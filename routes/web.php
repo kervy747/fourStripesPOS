@@ -54,6 +54,8 @@ Route::middleware('auth')->group(function () {
 
     //BACKUP
     Route::get('/backup', [BackupController::class, 'index'])->name('backup.index');
+    Route::post('/backup', [BackupController::class, 'store'])->name('backup.store');
+    Route::post('/backup/restore', [BackupController::class, 'restore'])->name('backup.restore');
 
     // ADMIN ONLY ROUTES
     Route::group(['middleware' => function ($request, $next) {
