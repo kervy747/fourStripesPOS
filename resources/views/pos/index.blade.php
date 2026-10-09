@@ -3,14 +3,6 @@
     <x-page-header title="Point of Sale" subtitle="Search and add items to the current transaction" />
 
     <main class="p-6 flex-1">
-
-        {{--
-            This hidden button must be the very first submit button in the DOM that is
-            associated with cart-form. The Find button below also has form="cart-form",
-            but since this button appears earlier in the HTML, pressing Enter inside any
-            cart-form field (like a quantity input) activates this button instead of Find.
-            It has no name, so updateCart runs the quantity-update logic and nothing else.
-        --}}
         <button type="submit" form="cart-form"
                 style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;"
                 tabindex="-1">
@@ -32,7 +24,7 @@
                         {{-- NAME + FIND --}}
                         <div class="flex gap-2 mb-2">
 
-                            <div class="flex h-10 items-center flex-1 bg-white border-2 border-neutral-300 rounded-lg py-2 px-3 gap-2 focus-within:border-black">
+                            <div class="flex h-10 items-center flex-1 bg-white border border-neutral-300 rounded-lg py-2 px-3 gap-2 focus-within:border-black focus-within:border-2">
                                 <img
                                     src="{{ asset('images/icons/black-search.svg') }}"
                                     alt="Search"
@@ -76,7 +68,7 @@
 
                         <div class="flex gap-2">
                             {{-- PHONE (OPTIONAL) --}}
-                            <div class="w-[35%] flex h-10 items-center flex-1 bg-white border-2 border-neutral-300 rounded-lg py-2 px-3 gap-2 focus-within:border-black">
+                            <div class="w-[35%] flex h-10 items-center flex-1 bg-white border border-neutral-300 rounded-lg py-2 px-3 gap-2 focus-within:border-black focus-within:border-2">
                                 <img src="{{ asset('images/icons/black-phone.svg') }}" alt="phone" class="w-4 h-4 opacity-60">
                                 <input type="text" form="cart-form" name="customer_phone" value="{{ old('customer_phone', $customerPhone) }}" placeholder="Phone # (optional)"
                                 class="w-full bg-white rounded-lg text-sm focus:outline-none {{ $selectedCustomerId ? 'opacity-50 cursor-not-allowed' : '' }}"
@@ -85,7 +77,7 @@
                             </div>
 
                             {{-- ADDRESS (REQUIRED) --}}
-                            <div class="w-[65%] flex h-10 items-center flex-1 bg-white border-2 border-neutral-300 rounded-lg py-2 px-3 gap-2 focus-within:border-black">
+                            <div class="w-[65%] flex h-10 items-center flex-1 bg-white border border-neutral-300 rounded-lg py-2 px-3 gap-2 focus-within:border-black focus-within:border-2">
                                 <img src="{{ asset('images/icons/black-location.svg') }}" alt="location" class="w-4 h-4 opacity-60">
                                  <input type="text" form="cart-form" name="customer_address" value="{{ old('customer_address', $customerAddress) }}" placeholder="Address"
                                 class="w-full bg-white rounded-lg text-sm focus:outline-none {{ $selectedCustomerId ? 'opacity-50 cursor-not-allowed' : '' }}"
@@ -132,7 +124,7 @@
                     {{-- SEARCH --}}
                     <form method="GET" action="{{ route('pos.index') }}" class="mb-4">
                         <input type="hidden" name="category" value="{{ request('category') }}">
-                        <div class="flex h-10 items-center flex-1 bg-white border-2 border-neutral-300 rounded-lg py-2 px-3 gap-2 focus-within:border-black">
+                        <div class="flex h-10 items-center flex-1 bg-white border border-neutral-300 rounded-lg py-2 px-3 gap-2 focus-within:border-black focus-within:border-2">
                             <img src="{{ asset('images/icons/black-search.svg') }}" alt="Search" class="w-4 h-4 opacity-60">
                             <input type="text" name="search" value="{{ request('search') }}" placeholder="Search products by name or ID number..." class="flex-1 text-sm focus:outline-none">
                         </div>
@@ -176,13 +168,6 @@
 
                         {{-- PRODUCTS --}}
                         @forelse($products as $product)
-                            {{--
-                                Hidden customer/cash fields are included here so that when staff clicks
-                                a product to add it to the cart, whatever was already saved in session
-                                (customer name, phone, address, cash) is not wiped out.
-                                Note: values typed in the cart form but not yet submitted will still be
-                                lost — staff should save/find the customer before browsing products.
-                            --}}
                             <form method="POST" action="{{ route('pos.add', $product) }}">
                                 @csrf
                                 <input type="hidden" name="customer_name"    value="{{ $customerName }}">

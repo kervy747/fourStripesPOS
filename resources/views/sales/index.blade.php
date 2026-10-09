@@ -1,7 +1,7 @@
 <x-layout active="sales">
 
     {{-- PAGE HEADER --}}
-    <x-page-header title="Sales Tracking" />
+    <x-page-header title="Sales Tracking" subtitle="Manage and track sales transactions" />
 
     <div class="flex-1 flex overflow-hidden">
 
@@ -11,7 +11,10 @@
             {{-- SEARCH --}}
             <form method="GET" action="{{ route('sales.index') }}" class="mb-4">
                 <input type="hidden" name="status" value="{{ $status }}">
-                <x-input name="search" type="text" placeholder="Search by OR number or customer..." value="{{ request('search') }}" />
+                <div class="flex h-10 items-center flex-1 bg-white border border-neutral-300 rounded-lg py-2 px-3 gap-2 focus-within:border-black focus-within:border-2">
+                    <img src="{{ asset('images/icons/black-search.svg') }}" alt="Search" class="w-4 h-4 opacity-60">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by OR number or customer..." class="flex-1 text-sm focus:outline-none">
+                </div>
             </form>
 
             {{-- TRANSACTIONS TABLE --}}
@@ -33,7 +36,7 @@
                                 $itemNames = $sale->items->map(fn ($item) => $item->product->name ?? '')->join(', ');
                                 $isSelected = $selectedSale && $selectedSale->id === $sale->id;
                             @endphp
-                            <tr class="relative border-t border-neutral-200 cursor-pointer {{ $isSelected ? 'bg-brand-yellow-tint' : 'hover:bg-neutral-100' }}">
+                            <tr class="relative border-t border-neutral-200 cursor-pointer {{ $isSelected ? 'bg-yellow-50 border-y border-yellow-500' : 'hover:bg-neutral-100' }}">
                                 <td class="px-4 py-3 font-semibold text-neutral-900">
                                     {{-- STRETCHED LINK: MAKES THE WHOLE ROW CLICKABLE WITHOUT JS --}}
                                     <a href="{{ route('sales.index', array_merge(request()->query(), ['selected' => $sale->id])) }}"
@@ -82,11 +85,11 @@
                 {{-- HEADER --}}
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="font-heading font-bold text-lg text-neutral-900">Transaction Details</h2>
-                    <a href="{{ route('sales.index', request()->except('selected')) }}" class="text-neutral-600 hover:text-neutral-900">&times;</a>
+                    <a href="{{ route('sales.index', request()->except('selected')) }}" class="text-neutral-600 hover:text-neutral-900 text-2xl">&times;</a>
                 </div>
 
                 {{-- BASIC INFO --}}
-                <div class="space-y-3 mb-6 text-sm">
+                <div class="space-y-3 mb-6 text-sm bg-neutral-100 p-4 rounded-lg">
                     <div class="flex justify-between">
                         <span class="text-neutral-600">OR Number</span>
                         <span class="font-semibold text-neutral-900">{{ $orNumber }}</span>

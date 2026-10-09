@@ -6,6 +6,18 @@
     <form id="cart-form" method="POST" action="{{ route('pos.cart.update') }}" class="flex flex-col flex-1 min-h-0">
         @csrf
 
+        {{--
+            Hidden fallback inputs for customer fields. The visible inputs in the customer
+            section are disabled when a customer is selected, and disabled inputs are not
+            submitted by the browser. These hidden inputs ensure the values are always sent
+            so checkout validation does not fail.
+        --}}
+        @if($selectedCustomerId)
+            <input type="hidden" name="customer_name"    value="{{ $customerName }}">
+            <input type="hidden" name="customer_phone"   value="{{ $customerPhone }}">
+            <input type="hidden" name="customer_address" value="{{ $customerAddress }}">
+        @endif
+
         {{-- CART ITEMS --}}
         <div class="flex-1 overflow-y-auto space-y-2 mb-2">
             @forelse($cart as $item)

@@ -97,10 +97,14 @@
             </div>
 
             {{-- SEARCH --}}
+                           
+
             <div class="flex-1 min-w-[200px]">
                 <label class="block text-xs font-semibold text-neutral-700 mb-1">Search</label>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search item name or code..."
-                       class="w-full border border-neutral-200 rounded-lg py-2 px-3 text-sm">
+                <div class="flex h-10 items-center flex-1 bg-white border border-neutral-300 rounded-lg py-2 px-3 gap-2 focus-within:border-black focus-within:border-2">
+                    <img src="{{ asset('images/icons/black-search.svg') }}" alt="Search" class="w-4 h-4 opacity-60">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search item name or code..." class="flex-1 text-sm focus:outline-none">
+                </div>
             </div>
 
             {{-- BUTTONS --}}

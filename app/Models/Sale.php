@@ -13,7 +13,6 @@ class Sale extends Model
     protected $fillable = [
         'customer_id',
         'user_id',
-        'payment_method',
         'cash_received',
         'change',
         'notes',

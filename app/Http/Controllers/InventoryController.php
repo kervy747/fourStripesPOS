@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\StockLog;
 use Illuminate\Http\Request;
 
 class InventoryController extends Controller
@@ -43,9 +44,9 @@ class InventoryController extends Controller
         $products = $query->orderBy('item_code')->paginate(10)->withQueryString();
 
         // SUMMARY COUNTS (BASED ON ALL PRODUCTS, NOT FILTERED)
-        $totalItems = Product::count();
-        $inStockCount = Product::whereColumn('quantity', '>', 'reorder_level')->count();
-        $lowStockCount = Product::whereColumn('quantity', '<=', 'reorder_level')->where('quantity', '>', 0)->count();
+        $totalItems      = Product::count();
+        $inStockCount    = Product::whereColumn('quantity', '>', 'reorder_level')->count();
+        $lowStockCount   = Product::whereColumn('quantity', '<=', 'reorder_level')->where('quantity', '>', 0)->count();
         $outOfStockCount = Product::where('quantity', 0)->count();
 
         return view('inventory.index', compact(
@@ -67,19 +68,28 @@ class InventoryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => ['required', 'string'],
-            'category' => ['required', 'in:machines,tools,accessories'],
-            'quantity' => ['required', 'integer', 'min:0'],
+            'name'          => ['required', 'string'],
+            'category'      => ['required', 'in:machines,tools,accessories'],
+            'quantity'      => ['required', 'integer', 'min:0'],
             'reorder_level' => ['required', 'integer', 'min:0'],
-            'unit_cost' => ['required', 'numeric', 'min:0'],
-            'price' => ['required', 'numeric', 'min:0'],
-            'description' => ['nullable', 'string'],
+            'unit_cost'     => ['required', 'numeric', 'min:0'],
+            'price'         => ['required', 'numeric', 'min:0'],
+            'description'   => ['nullable', 'string'],
         ]);
 
         // AUTO-GENERATE ITEM CODE BASED ON CATEGORY
         $validated['item_code'] = $this->generateItemCode($validated['category']);
 
-        Product::create($validated);
+        $product = Product::create($validated);
+
+        // LOG INITIAL STOCK IF QUANTITY IS MORE THAN ZERO
+        if ($product->quantity > 0) {
+            StockLog::create([
+                'product_id'     => $product->id,
+                'quantity_added' => $product->quantity,
+                'notes'          => 'Initial stock on item creation',
+            ]);
+        }
 
         return redirect()->route('inventory.index')->with('success', 'Item added successfully.');
     }
@@ -88,8 +98,8 @@ class InventoryController extends Controller
     private function generateItemCode($category)
     {
         $prefixes = [
-            'machines' => 'MCH',
-            'tools' => 'TOL',
+            'machines'    => 'MCH',
+            'tools'       => 'TOL',
             'accessories' => 'ACC',
         ];
 
@@ -119,13 +129,25 @@ class InventoryController extends Controller
     public function update(Request $request, Product $product)
     {
         $validated = $request->validate([
-            'name' => ['required', 'string'],
-            'quantity' => ['required', 'integer', 'min:0'],
+            'name'          => ['required', 'string'],
+            'quantity'      => ['required', 'integer', 'min:0'],
             'reorder_level' => ['required', 'integer', 'min:0'],
-            'unit_cost' => ['required', 'numeric', 'min:0'],
-            'price' => ['required', 'numeric', 'min:0'],
-            'description' => ['nullable', 'string'],
+            'unit_cost'     => ['required', 'numeric', 'min:0'],
+            'price'         => ['required', 'numeric', 'min:0'],
+            'description'   => ['nullable', 'string'],
         ]);
+
+        // LOG STOCK IN IF QUANTITY WAS INCREASED
+        $oldQuantity = $product->quantity;
+        $newQuantity = $validated['quantity'];
+
+        if ($newQuantity > $oldQuantity) {
+            StockLog::create([
+                'product_id'     => $product->id,
+                'quantity_added' => $newQuantity - $oldQuantity,
+                'notes'          => 'Restocked via inventory edit',
+            ]);
+        }
 
         // ITEM CODE AND CATEGORY STAY FIXED, NOT INCLUDED IN UPDATE
         $product->update($validated);

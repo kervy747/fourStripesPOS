@@ -9,6 +9,7 @@ use App\Http\Controllers\SalesController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\ReportController;
 
 // ROOT REDIRECT
 Route::get('/', function () {
@@ -49,9 +50,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/sales/{sale}/complete', [SalesController::class, 'markCompleted'])->name('sales.complete');
 
     // REPORTS (SHARED - ADMIN & STAFF)
-    Route::get('/reports', function () {
-        return view('reports.index');
-    })->name('reports.index');
+    // REPORTS (SHARED - ADMIN & STAFF)
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/print', [ReportController::class, 'printPdf'])->name('reports.print');
+    Route::get('/reports/inventory', [ReportController::class, 'inventoryReport'])->name('reports.inventory');
+    Route::get('/reports/inventory/print', [ReportController::class, 'inventoryPdf'])->name('reports.inventory.print');
 
     //BACKUP
     Route::get('/backup', [BackupController::class, 'index'])->name('backup.index');

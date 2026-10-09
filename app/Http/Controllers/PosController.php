@@ -22,7 +22,7 @@ class PosController extends Controller
 
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('item_code', 'like', "%{$search}%");
+                ->orWhere('item_code', 'like', "%{$search}%");
             });
         }
 
@@ -32,7 +32,15 @@ class PosController extends Controller
         }
 
         // PAGINATED PRODUCT LIST
-        $products = $query->orderBy('item_code')->paginate(8)->withQueryString();
+        $products = $query
+            ->orderByRaw('CASE
+                WHEN quantity = 0 THEN 2
+                WHEN quantity <= reorder_level THEN 1
+                ELSE 0
+            END')
+            ->orderBy('item_code')
+            ->paginate(8)
+            ->withQueryString();
 
         // GET CART AND CUSTOMER INFO FROM SESSION
         $cart            = session('cart', []);
@@ -74,9 +82,6 @@ class PosController extends Controller
         if ($request->has('find_customer')) {
             $name = trim($request->input('customer_name', ''));
 
-            // SAVE PHONE, ADDRESS, AND CASH TO SESSION
-            // Do NOT save the search name here — it would overwrite a previously confirmed customer
-            // name if no match is found. The typed name is preserved via withInput() instead.
             session(['cart_customer_phone'   => $request->input('customer_phone', '')]);
             session(['cart_customer_address' => $request->input('customer_address', '')]);
             session(['cart_cash_received'    => $request->input('cash_received', '')]);
@@ -173,10 +178,6 @@ class PosController extends Controller
     public function updateCart(Request $request)
     {
         $cart = session('cart', []);
-
-        // ALWAYS SAVE NOTES, CUSTOMER INFO, AND CASH RECEIVED
-        // Skip customer_name if the field was disabled (selected customer) — disabled inputs
-        // are not submitted, so $request->filled() will be false and we keep the session value.
         session(['cart_notes'         => $request->input('notes', '')]);
         session(['cart_cash_received' => $request->input('cash_received', '')]);
         if ($request->filled('customer_name')) {
