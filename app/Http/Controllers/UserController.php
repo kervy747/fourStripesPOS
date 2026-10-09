@@ -44,12 +44,14 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'phone_number' => ['required', 'string', 'max:20'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', 'in:admin,staff'],
+            'first_name'   => ['required', 'string', 'max:255'],
+            'last_name'    => ['required', 'string', 'max:255'],
+            'email'        => ['required', 'email', 'unique:users,email'],
+            'phone_number' => ['required', 'regex:/^0\d{10}$/', 'unique:users,phone_number'],
+            'password'     => ['required', 'string', 'min:8', 'confirmed'],
+            'role'         => ['required', 'in:admin,staff'],
+        ], [
+            'phone_number.regex' => 'Phone number must be 11 digits and start with 0.',
         ]);
 
         User::create($validated);
@@ -66,13 +68,24 @@ class UserController extends Controller
     // UPDATE USER
     public function update(Request $request, User $user)
     {
+        // PRE-CHECK PASSWORD MATCH
+        if ($request->filled('password') && $request->password !== $request->password_confirmation) {
+            return back()
+                ->withInput()
+                ->withErrors(['password' => 'The passwords do not match.'])
+                ->with('saved_password', $request->password)
+                ->with('saved_password_confirmation', $request->password_confirmation);
+        }
+
         $validated = $request->validate([
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email,' . $user->id],
-            'phone_number' => ['required', 'string', 'max:20'],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
-            'role' => ['required', 'in:admin,staff'],
+            'first_name'   => ['required', 'string', 'max:255'],
+            'last_name'    => ['required', 'string', 'max:255'],
+            'email'        => ['required', 'email', 'unique:users,email,' . $user->id],
+            'phone_number' => ['required', 'regex:/^0\d{10}$/', 'unique:users,phone_number,' . $user->id],
+            'password'     => ['nullable', 'string', 'min:8'],
+            'role'         => ['required', 'in:admin,staff'],
+        ], [
+            'phone_number.regex' => 'Phone number must be 11 digits and start with 0.',
         ]);
 
         // ADMIN CANNOT CHANGE OWN ROLE
