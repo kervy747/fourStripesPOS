@@ -139,6 +139,9 @@ FourStripesPOS/
 │       │
 │       ├── reports/
 │       │   └── index.blade.php
+│       │   └── inventory.blade.php
+│       │   └── inventory_pdf.blade.php
+│       │   └── pdf.blade.php
 │       │
 │       ├── pos/
 │       │   ├── index.blade.php
@@ -154,7 +157,6 @@ FourStripesPOS/
 │       │
 │       ├── sales/
 │       │   ├── index.blade.php
-│       │   └── show.blade.php
 │       │
 │       └── receipts/
 │           └── pdf.blade.php
