@@ -189,8 +189,17 @@
                         </a>
                     </div>
 
+                    {{-- CUSTOMER REQUIRED NOTICE --}}
+                    @php $customerReady = $selectedCustomerId || trim($customerName) !== ''; @endphp
+
+                    @unless($customerReady)
+                        <div class="bg-warning-tint text-warning text-xs font-semibold px-4 py-3 rounded-lg mb-3">
+                            Enter a customer name and click <span class="underline">Find</span> before adding products.
+                        </div>
+                    @endunless
+
                     {{-- PRODUCT LIST --}}
-                    <div class="bg-neutral-0 rounded-xl shadow-[0_0_1px_0px_black] overflow-hidden">
+                    <div class="bg-neutral-0 rounded-xl shadow-[0_0_1px_0px_black] overflow-hidden {{ !$customerReady ? 'opacity-50' : '' }}">
 
                         {{-- HEADER --}}
                         <div class="flex items-center justify-between px-4 py-3 bg-white border-b border-neutral-200 text-xs font-semibold text-neutral-500">
@@ -214,9 +223,11 @@
                                 <input type="hidden" name="customer_address" value="{{ $customerAddress }}">
                                 <input type="hidden" name="cash_received"    value="{{ $cashReceived }}">
 
+                                @php $productDisabled = $product->quantity == 0 || !$customerReady; @endphp
+
                                 <button type="submit"
-                                    @if($product->quantity == 0) disabled @endif
-                                    class="w-full flex items-center justify-between px-4 py-3 border-b border-neutral-100 text-left {{ $product->quantity == 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-neutral-100' }}">
+                                    @if($productDisabled) disabled @endif
+                                    class="w-full flex items-center justify-between px-4 py-3 border-b border-neutral-100 text-left {{ $productDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-neutral-100' }}">
 
                                     <div class="flex items-center gap-4">
                                         <span class="text-xs text-neutral-500 w-16">
@@ -246,6 +257,7 @@
                                                 {{ $product->quantity }} in stock
                                             </span>
                                         @endif
+
                                     </div>
 
                                 </button>
