@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuditLog;
 use App\Models\Product;
 use App\Models\StockLog;
 use Illuminate\Http\Request;
@@ -85,10 +86,19 @@ class InventoryController extends Controller
         // LOG INITIAL STOCK IF QUANTITY IS MORE THAN ZERO
         if ($product->quantity > 0) {
             StockLog::create([
-                'product_id'     => $product->id,
-                'quantity_added' => $product->quantity,
-                'notes'          => 'Initial stock on item creation',
+                'product_id'      => $product->id,
+                'quantity_before' => 0,
+                'quantity_added'  => $product->quantity,
+                'quantity_after'  => $product->quantity,
+                'notes'           => 'Initial stock on item creation',
             ]);
+
+            AuditLog::record(
+                action: 'stock_added',
+                description: 'Added ' . $product->quantity . ' units of ' . $product->name . ' (' . $product->item_code . ') as initial stock.',
+                subjectType: 'Product',
+                subjectId: $product->id,
+            );
         }
 
         return redirect()->route('inventory.index')->with('success', 'Item added successfully.');
@@ -137,16 +147,25 @@ class InventoryController extends Controller
             'description'   => ['nullable', 'string'],
         ]);
 
-        // LOG STOCK IN IF QUANTITY WAS INCREASED
         $oldQuantity = $product->quantity;
-        $newQuantity = $validated['quantity'];
+        $newQuantity = (int) $validated['quantity'];
 
+        // LOG STOCK IN IF QUANTITY WAS INCREASED
         if ($newQuantity > $oldQuantity) {
             StockLog::create([
-                'product_id'     => $product->id,
-                'quantity_added' => $newQuantity - $oldQuantity,
-                'notes'          => 'Restocked via inventory edit',
+                'product_id'      => $product->id,
+                'quantity_before' => $oldQuantity,
+                'quantity_added'  => $newQuantity - $oldQuantity,
+                'quantity_after'  => $newQuantity,
+                'notes'           => 'Restocked via inventory edit',
             ]);
+
+            AuditLog::record(
+                action: 'stock_added',
+                description: 'Restocked ' . ($newQuantity - $oldQuantity) . ' units of ' . $product->name . ' (' . $product->item_code . ').',
+                subjectType: 'Product',
+                subjectId: $product->id,
+            );
         }
 
         // ITEM CODE AND CATEGORY STAY FIXED, NOT INCLUDED IN UPDATE

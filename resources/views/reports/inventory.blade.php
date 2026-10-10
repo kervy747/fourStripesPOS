@@ -17,7 +17,7 @@
         </div>
 
         {{-- DATE FILTER FORM --}}
-        <form method="GET" action="{{ route('reports.inventory') }}" class="flex flex-wrap items-end gap-3 mb-6 bg-white rounded-xl px-4 py-5 shadow-sm">
+        <form method="GET" action="{{ route('reports.inventory') }}" class="flex flex-wrap items-end gap-3 mb-6">
 
             <div>
                 <label class="block text-sm font-semibold text-neutral-900 mb-1 font-body">Date From</label>
@@ -56,7 +56,7 @@
         {{-- INVENTORY TABLE --}}
         <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-neutral-100">
             <table class="w-full text-sm font-body">
-                <thead class="bg-white text-neutral-600 text-left">
+                <thead class="bg-neutral-100 text-neutral-600 text-left">
                     <tr>
                         <th class="px-4 py-3 font-semibold">Item Code</th>
                         <th class="px-4 py-3 font-semibold">Item</th>
@@ -68,17 +68,12 @@
                 </thead>
                 <tbody class="divide-y divide-neutral-100">
                     @forelse ($products as $product)
-                        @php
-                            $totalStockIn  = $stockIn->get($product->id)?->sum('quantity_added') ?? 0;
-                            $totalStockOut = $stockOut->get($product->id)?->sum('quantity') ?? 0;
-                            $beginning     = $product->quantity + $totalStockOut - $totalStockIn;
-                        @endphp
                         <tr class="hover:bg-neutral-50 transition">
                             <td class="px-4 py-3 font-heading font-bold text-brand-black">{{ $product->item_code }}</td>
                             <td class="px-4 py-3 text-neutral-900">{{ $product->name }}</td>
-                            <td class="px-4 py-3 text-right text-neutral-600">{{ $beginning }}</td>
-                            <td class="px-4 py-3 text-right text-neutral-600">{{ $totalStockIn }}</td>
-                            <td class="px-4 py-3 text-right text-neutral-600">{{ $totalStockOut }}</td>
+                            <td class="px-4 py-3 text-right text-neutral-600">{{ $beginningBalances[$product->id] }}</td>
+                            <td class="px-4 py-3 text-right text-neutral-600">{{ $stockIn->get($product->id)?->sum('quantity_added') ?? 0 }}</td>
+                            <td class="px-4 py-3 text-right text-neutral-600">{{ $stockOut->get($product->id)?->sum('quantity') ?? 0 }}</td>
                             <td class="px-4 py-3 text-right font-heading font-bold text-brand-black">{{ $product->quantity }}</td>
                         </tr>
                     @empty

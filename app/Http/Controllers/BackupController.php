@@ -47,12 +47,10 @@ class BackupController extends Controller
         }
 
         // LOG THE ACTION
-        AuditLog::create([
-            'user_id'     => auth()->id(),
-            'module'      => 'Backup',
-            'action'      => 'BACKUP',
-            'description' => 'Database backup created: ' . $fileName,
-        ]);
+        AuditLog::record(
+            action: 'backup',
+            description: 'Database backup downloaded: ' . $fileName,
+        );
 
         // DOWNLOAD THEN DELETE THE TEMP FILE
         return response()->download($filePath, $fileName)->deleteFileAfterSend(true);
@@ -116,12 +114,10 @@ class BackupController extends Controller
         }
 
         // LOG THE ACTION
-        AuditLog::create([
-            'user_id'     => auth()->id(),
-            'module'      => 'Backup',
-            'action'      => 'RESTORE',
-            'description' => 'Database restored from: ' . $file->getClientOriginalName(),
-        ]);
+        AuditLog::record(
+            action: 'backup',
+            description: 'Database restored from: ' . $file->getClientOriginalName(),
+        );
 
         return back()->with('success', 'Database restored successfully.');
     }

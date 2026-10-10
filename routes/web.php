@@ -54,7 +54,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/sales/{sale}/complete', [SalesController::class, 'markCompleted'])->name('sales.complete');
 
     // REPORTS (SHARED - ADMIN & STAFF)
-    // REPORTS (SHARED - ADMIN & STAFF)
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/print', [ReportController::class, 'printPdf'])->name('reports.print');
     Route::get('/reports/inventory', [ReportController::class, 'inventoryReport'])->name('reports.inventory');
@@ -82,7 +81,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
 
         // AUDIT LOG
-      Route::get('/audit-log', [AuditLogController::class, 'index'])->name('audit-log.index');
+        Route::get('/audit-log', [AuditLogController::class, 'index'])->name('audit-log.index');
     });
 
 });

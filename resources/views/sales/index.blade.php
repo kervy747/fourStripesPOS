@@ -20,7 +20,7 @@
             {{-- TRANSACTIONS TABLE --}}
             <div class="bg-neutral-0 rounded-xl border border-neutral-200 overflow-hidden">
                 <table class="w-full text-sm font-body">
-                    <thead class="bg-neutral-100 text-neutral-600 text-xs uppercase font-heading">
+                    <thead class="bg- text-neutral-600 text-xs uppercase font-heading">
                         <tr>
                             <th class="text-left px-4 py-3">OR No.</th>
                             <th class="text-left px-4 py-3">Date &amp; Time</th>

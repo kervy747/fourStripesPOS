@@ -12,7 +12,9 @@ class StockLog extends Model
     // FILLABLE FIELDS
     protected $fillable = [
         'product_id',
+        'quantity_before',
         'quantity_added',
+        'quantity_after',
         'notes',
     ];
 

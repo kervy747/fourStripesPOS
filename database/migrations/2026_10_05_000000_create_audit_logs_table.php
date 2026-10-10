@@ -11,9 +11,17 @@ return new class extends Migration
         Schema::create('audit_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('module');
-            $table->string('action');
-            $table->text('description');
+            $table->enum('action', [
+                'login',
+                'logout',
+                'purchase',
+                'print_report',
+                'backup',
+                'stock_added',
+            ]);
+            $table->string('description');
+            $table->string('subject_type')->nullable();
+            $table->unsignedBigInteger('subject_id')->nullable();
 
             $table->timestamps();
         });

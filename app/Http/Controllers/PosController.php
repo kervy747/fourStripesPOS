@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuditLog;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Sale;
@@ -350,6 +351,14 @@ class PosController extends Controller
                 $product->decrement('quantity', $item['quantity']);
             }
         }
+
+        // LOG THE SALE
+        AuditLog::record(
+            action: 'purchase',
+            description: 'Sale #' . str_pad($sale->id, 4, '0', STR_PAD_LEFT) . ' completed for ₱' . number_format($sale->total, 2) . ' — ' . $customer->name . '.',
+            subjectType: 'Sale',
+            subjectId: $sale->id,
+        );
 
         // CLEAR CART AND CUSTOMER SESSION DATA
         session()->forget([

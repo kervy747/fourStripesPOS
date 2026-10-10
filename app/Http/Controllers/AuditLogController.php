@@ -9,21 +9,23 @@ class AuditLogController extends Controller
 {
     public function index(Request $request)
     {
-        // BASE QUERY
+        // GATE — admin only
+        abort_unless(auth()->user()->isAdmin(), 403);
+
         $query = AuditLog::with('user')->latest();
 
-        // MODULE FILTER
-        if ($request->filled('module')) {
-            $query->where('module', $request->module);
+        // FILTER BY ACTION
+        if ($request->filled('action')) {
+            $query->where('action', $request->action);
         }
 
-        // SEARCH FILTER
-        if ($request->filled('search')) {
-            $query->where('description', 'like', '%' . $request->search . '%');
+        // FILTER BY DATE
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->date);
         }
 
-        $logs = $query->paginate(15)->withQueryString();
+        $logs = $query->paginate(20)->withQueryString();
 
         return view('admin.audit-log.index', compact('logs'));
     }
-}   
+}
