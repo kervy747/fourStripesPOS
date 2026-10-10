@@ -13,8 +13,7 @@
     <nav class="flex-1 p-4 space-y-1">
 
         {{-- DASHBOARD --}}
-        {{-- {{ route('dashboard.index') }} --}}
-        <a href=""
+        <a href="{{ route('dashboard.index') }}"
            class="flex items-center gap-3 px-4 py-3 rounded-lg {{ $active === 'dashboard' ? 'bg-brand-yellow text-brand-black font-semibold' : 'text-neutral-200 hover:bg-neutral-900' }}">
             <img src="{{ asset('images/icons/' . ($active === 'dashboard' ? 'black-home.svg' : 'white-home.svg')) }}" class="w-5 h-5" alt="">
             Dashboard

@@ -43,14 +43,14 @@ class PosController extends Controller
             ->withQueryString();
 
         // GET CART AND CUSTOMER INFO FROM SESSION
-        $cart            = session('cart', []);
-        $notes           = session('cart_notes', '');
-        $customerName    = session('cart_customer_name', '');
-        $customerPhone   = session('cart_customer_phone', '');
-        $customerAddress = session('cart_customer_address', '');
+        $cart               = session('cart', []);
+        $notes              = session('cart_notes', '');
+        $customerName       = session('cart_customer_name', '');
+        $customerPhone      = session('cart_customer_phone', '');
+        $customerAddress    = session('cart_customer_address', '');
         $selectedCustomerId = session('cart_customer_id');
-        $customerMatches = session('customer_matches', []);
-        $cashReceived    = session('cart_cash_received', '');
+        $customerMatches    = session('customer_matches', []);
+        $cashReceived       = session('cart_cash_received', '');
 
         // CALCULATE TOTAL
         $total = collect($cart)->sum(function ($item) {
@@ -99,17 +99,17 @@ class PosController extends Controller
 
             if ($matches->isEmpty()) {
                 session()->forget('customer_matches');
+                session(['cart_customer_name' => $name]);
 
-                // withInput() echoes the typed name back into the field without overwriting session
                 return redirect()
                     ->route('pos.index')
                     ->withInput()
                     ->with('customer_not_found', true);
             }
 
-            session(['customer_matches' => $matches->toArray()]);
+            session(['cart_customer_name' => $name]);
+            session(['customer_matches'   => $matches->toArray()]);
 
-            // Keep the typed name visible while staff picks from the match list
             return redirect()->route('pos.index')->withInput();
         }
 
@@ -131,7 +131,7 @@ class PosController extends Controller
 
         // CLEAR SELECTED CUSTOMER
         if ($request->has('clear_customer')) {
-            session()->forget(['cart_customer_id', 'customer_matches']);
+            session()->forget(['cart_customer_id', 'customer_matches', 'cart_customer_name', 'cart_customer_phone', 'cart_customer_address']);
 
             return redirect()->route('pos.index');
         }
@@ -140,13 +140,16 @@ class PosController extends Controller
     // ADD PRODUCT TO CART
     public function add(Request $request, Product $product)
     {
-        // PRESERVE CUSTOMER FIELDS AND CASH FROM HIDDEN INPUTS IN PRODUCT FORMS
-        if ($request->filled('customer_name')) {
-            session(['cart_customer_name'    => $request->input('customer_name', '')]);
+        // PRESERVE CUSTOMER FIELDS FROM HIDDEN INPUTS — ONLY IF NO CUSTOMER IS LOCKED IN
+        if (!session('cart_customer_id')) {
+            if ($request->filled('customer_name')) {
+                session(['cart_customer_name' => $request->input('customer_name')]);
+            }
+            session(['cart_customer_phone'   => $request->input('customer_phone', '')]);
+            session(['cart_customer_address' => $request->input('customer_address', '')]);
         }
-        session(['cart_customer_phone'   => $request->input('customer_phone', '')]);
-        session(['cart_customer_address' => $request->input('customer_address', '')]);
-        session(['cart_cash_received'    => $request->input('cash_received', '')]);
+
+        session(['cart_cash_received' => $request->input('cash_received', '')]);
 
         $cart = session('cart', []);
 
@@ -174,19 +177,19 @@ class PosController extends Controller
         return redirect()->back();
     }
 
-    // UPDATE CART - INCREASE / DECREASE / REMOVE / CUSTOMER SEARCH / CHECKOUT
+    // UPDATE CART - INCREASE / DECREASE / REMOVE / CHECKOUT
     public function updateCart(Request $request)
     {
         $cart = session('cart', []);
         session(['cart_notes'         => $request->input('notes', '')]);
         session(['cart_cash_received' => $request->input('cash_received', '')]);
-        if ($request->filled('customer_name')) {
-            session(['cart_customer_name' => $request->input('customer_name')]);
-        }
-        if ($request->filled('customer_phone') || !session('cart_customer_id')) {
-            session(['cart_customer_phone' => $request->input('customer_phone', '')]);
-        }
-        if ($request->filled('customer_address') || !session('cart_customer_id')) {
+
+        // ONLY UPDATE CUSTOMER FIELDS IF NO CUSTOMER IS LOCKED IN
+        if (!session('cart_customer_id')) {
+            if ($request->filled('customer_name')) {
+                session(['cart_customer_name' => $request->input('customer_name')]);
+            }
+            session(['cart_customer_phone'   => $request->input('customer_phone', '')]);
             session(['cart_customer_address' => $request->input('customer_address', '')]);
         }
 
@@ -218,11 +221,18 @@ class PosController extends Controller
             }
         }
 
+        // REMOVE ITEM
+        if ($request->has('remove')) {
+            $id = (int) $request->input('remove');
+            unset($cart[$id]);
+        }
+
         // UPDATE TYPED QUANTITY
         if (
             $request->has('quantity') &&
             !$request->has('increase') &&
-            !$request->has('decrease')
+            !$request->has('decrease') &&
+            !$request->has('remove')
         ) {
             foreach ($request->input('quantity') as $id => $quantity) {
                 $id       = (int) $id;
@@ -232,7 +242,6 @@ class PosController extends Controller
                     $capped = max(1, min($quantity, $cart[$id]['available']));
 
                     if ($quantity > $cart[$id]['available']) {
-                        session(['cart' => $cart]);
                         $cart[$id]['quantity'] = $capped;
                         session(['cart' => $cart]);
                         return redirect()->route('pos.index')
@@ -269,9 +278,11 @@ class PosController extends Controller
         // VALIDATE CUSTOMER AND CASH INFO
         $validated = $request->validate([
             'customer_name'    => ['required', 'string'],
-            'customer_phone'   => ['nullable', 'string'],
+            'customer_phone'   => ['nullable', 'string', 'regex:/^(\d{7}|\d{8}|0\d{10})$/'],
             'customer_address' => ['required', 'string'],
             'cash_received'    => ['required', 'numeric', 'min:0'],
+        ], [
+            'customer_phone.regex' => 'Invalid phone number. Must be 7 digits (local landline), 8 digits (Metro Manila landline), or 11 digits starting with 0 (mobile).',
         ]);
 
         // CASH MUST COVER THE TOTAL
@@ -285,13 +296,30 @@ class PosController extends Controller
         $customerId = session('cart_customer_id');
 
         if ($customerId) {
+            // STAFF USED THE FIND BUTTON AND SELECTED A CUSTOMER — USE THAT RECORD
             $customer = Customer::find($customerId);
         } else {
-            $customer = Customer::create([
-                'name'         => $validated['customer_name'],
-                'phone_number' => $validated['customer_phone'] ?? null,
-                'address'      => $validated['customer_address'],
-            ]);
+            // STAFF TYPED MANUALLY — CHECK IF SAME NAME + PHONE + ADDRESS ALREADY EXISTS
+            $typedName    = $validated['customer_name'];
+            $typedPhone   = $validated['customer_phone'] ?? null;
+            $typedAddress = $validated['customer_address'];
+
+            $existing = Customer::whereRaw('LOWER(name) = ?', [strtolower($typedName)])
+                ->where('phone_number', $typedPhone)
+                ->whereRaw('LOWER(address) = ?', [strtolower($typedAddress)])
+                ->first();
+
+            if ($existing) {
+                // EXACT MATCH — REUSE EXISTING CUSTOMER, DO NOT CREATE A DUPLICATE
+                $customer = $existing;
+            } else {
+                // NEW INFORMATION ATTACHED TO THIS NAME — CREATE A NEW RECORD
+                $customer = Customer::create([
+                    'name'         => $typedName,
+                    'phone_number' => $typedPhone,
+                    'address'      => $typedAddress,
+                ]);
+            }
         }
 
         // CREATE THE SALE
@@ -336,7 +364,6 @@ class PosController extends Controller
         ]);
 
         return redirect()->route('pos.index')
-            ->with('success', 'Sale completed successfully.')
-            ->with('receipt_url', route('receipts.show', $sale->id));
+            ->with('receipt_popup', route('receipts.show', $sale->id));
     }
 }

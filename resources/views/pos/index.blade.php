@@ -12,7 +12,7 @@
 
             {{-- LEFT: PRODUCT BROWSING --}}
             <div class="flex-1">
-                
+
                 {{-- CUSTOMER INPUT CONTAINER --}}
                 <div class="bg-neutral-0 rounded-xl shadow-sm p-4 mb-4">
                     {{-- CUSTOMER --}}
@@ -67,28 +67,67 @@
                         </div>
 
                         <div class="flex gap-2">
-                            {{-- PHONE (OPTIONAL) --}}
-                            <div class="w-[35%] flex h-10 items-center flex-1 bg-white border border-neutral-300 rounded-lg py-2 px-3 gap-2 focus-within:border-black focus-within:border-2">
-                                <img src="{{ asset('images/icons/black-phone.svg') }}" alt="phone" class="w-4 h-4 opacity-60">
-                                <input type="text" form="cart-form" name="customer_phone" value="{{ old('customer_phone', $customerPhone) }}" placeholder="Phone # (optional)"
-                                class="w-full bg-white rounded-lg text-sm focus:outline-none {{ $selectedCustomerId ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                {{ $selectedCustomerId ? 'disabled' : '' }}
-                                onkeydown="if(event.key === 'Enter'){ event.preventDefault(); }">
+                            {{-- PHONE (OPTIONAL, 7 / 8 / 11 DIGITS) --}}
+                            <div class="w-[35%]">
+                                <div class="flex h-10 items-center bg-white border border-neutral-300 rounded-lg py-2 px-3 gap-2 focus-within:border-black focus-within:border-2">
+                                    <img src="{{ asset('images/icons/black-phone.svg') }}" alt="phone" class="w-4 h-4 opacity-60">
+                                    <input
+                                        type="text"
+                                        id="customer_phone"
+                                        form="cart-form"
+                                        name="customer_phone"
+                                        value="{{ old('customer_phone', $customerPhone) }}"
+                                        placeholder="Phone # (optional)"
+                                        maxlength="11"
+                                        inputmode="numeric"
+                                        class="w-full bg-white rounded-lg text-sm focus:outline-none {{ $selectedCustomerId ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                        {{ $selectedCustomerId ? 'disabled' : '' }}
+                                        onkeydown="if(event.key === 'Enter'){ event.preventDefault(); }"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11); validatePhone(this);"
+                                        onblur="validatePhone(this)">
+                                </div>
+                                <p id="phone_hint" class="text-xs text-danger mt-1 hidden">Invalid number. Use 7, 8, or 11 digits. 11-digit numbers must start with 0.</p>
                             </div>
+
+                            <script>
+                                function validatePhone(input) {
+                                    const val = input.value;
+                                    const hint = document.getElementById('phone_hint');
+
+                                    if (val === '') {
+                                        hint.classList.add('hidden');
+                                        return;
+                                    }
+
+                                    const isValid = /^(\d{7}|\d{8}|0\d{10})$/.test(val);
+
+                                    if (isValid) {
+                                        hint.classList.add('hidden');
+                                    } else {
+                                        hint.classList.remove('hidden');
+                                    }
+                                }
+                            </script>
 
                             {{-- ADDRESS (REQUIRED) --}}
                             <div class="w-[65%] flex h-10 items-center flex-1 bg-white border border-neutral-300 rounded-lg py-2 px-3 gap-2 focus-within:border-black focus-within:border-2">
                                 <img src="{{ asset('images/icons/black-location.svg') }}" alt="location" class="w-4 h-4 opacity-60">
-                                 <input type="text" form="cart-form" name="customer_address" value="{{ old('customer_address', $customerAddress) }}" placeholder="Address"
-                                class="w-full bg-white rounded-lg text-sm focus:outline-none {{ $selectedCustomerId ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                {{ $selectedCustomerId ? 'disabled' : '' }}
-                                onkeydown="if(event.key === 'Enter'){ event.preventDefault(); }">
+                                <input
+                                    type="text"
+                                    form="cart-form"
+                                    name="customer_address"
+                                    value="{{ old('customer_address', $customerAddress) }}"
+                                    placeholder="Address"
+                                    class="w-full bg-white rounded-lg text-sm focus:outline-none {{ $selectedCustomerId ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                    {{ $selectedCustomerId ? 'disabled' : '' }}
+                                    onkeydown="if(event.key === 'Enter'){ event.preventDefault(); }">
                             </div>
                         </div>
 
                         {{-- CUSTOMER ERRORS --}}
                         <x-error name="customer_address" />
                         <x-error name="customer_name" />
+                        <x-error name="customer_phone" />
 
                         {{-- CUSTOMER NOT FOUND --}}
                         @if(session('customer_not_found'))

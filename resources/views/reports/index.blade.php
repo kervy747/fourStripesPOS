@@ -24,7 +24,7 @@
         @if ($tab === 'sales')
 
             {{-- DATE FILTER FORM --}}
-            <form method="GET" action="{{ route('reports.index') }}" class="flex flex-wrap items-end gap-3 mb-6">
+            <form method="GET" action="{{ route('reports.index') }}" class="flex flex-wrap items-end gap-3 mb-6 bg-white rounded-xl px-4 py-5 shadow-sm">
                 <input type="hidden" name="tab" value="sales">
 
                 <div>

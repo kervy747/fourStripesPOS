@@ -137,11 +137,7 @@
     <div class="divider"></div>
 
     <div class="footer">
-        @if($sale->status === 'completed')
-            Thank you for your purchase!
-        @else
-            This is a pending order slip for supplier reference.
-        @endif
+        This is a temporary receipt. Please keep this for your records. Thank you for your purchase!
     </div>
 
 </body>

@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\DashboardController;
 
 // ROOT REDIRECT
 Route::get('/', function () {
@@ -27,6 +28,9 @@ Route::middleware('auth')->group(function () {
 
     // LOGOUT
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    // DASHBOARD
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
     // POS
     Route::get('/pos', [PosController::class, 'index'])->name('pos.index');

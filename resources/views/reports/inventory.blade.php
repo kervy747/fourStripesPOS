@@ -17,7 +17,7 @@
         </div>
 
         {{-- DATE FILTER FORM --}}
-        <form method="GET" action="{{ route('reports.inventory') }}" class="flex flex-wrap items-end gap-3 mb-6">
+        <form method="GET" action="{{ route('reports.inventory') }}" class="flex flex-wrap items-end gap-3 mb-6 bg-white rounded-xl px-4 py-5 shadow-sm">
 
             <div>
                 <label class="block text-sm font-semibold text-neutral-900 mb-1 font-body">Date From</label>
@@ -56,7 +56,7 @@
         {{-- INVENTORY TABLE --}}
         <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-neutral-100">
             <table class="w-full text-sm font-body">
-                <thead class="bg-neutral-100 text-neutral-600 text-left">
+                <thead class="bg-white text-neutral-600 text-left">
                     <tr>
                         <th class="px-4 py-3 font-semibold">Item Code</th>
                         <th class="px-4 py-3 font-semibold">Item</th>

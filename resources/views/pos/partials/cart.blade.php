@@ -3,6 +3,13 @@
 
     <h2 class="font-heading font-bold text-lg text-neutral-900 mb-4">Current Transaction</h2>
 
+    {{-- RECEIPT AUTO-POPUP --}}
+    @if(session('receipt_popup'))
+        <script>
+            window.open('{{ session('receipt_popup') }}', '_blank');
+        </script>
+    @endif
+
     <form id="cart-form" method="POST" action="{{ route('pos.cart.update') }}" class="flex flex-col flex-1 min-h-0">
         @csrf
 
@@ -37,6 +44,7 @@
                             </span>
 
                             <button type="submit" name="decrease" value="{{ $item['product_id'] }}"
+                                formaction="{{ route('pos.cart.update') }}"
                                 class="w-7 h-7 rounded bg-neutral-100 text-neutral-700 text-sm font-bold">
                                 -
                             </button>
@@ -55,11 +63,16 @@
                             >
 
                             <button type="submit" name="increase" value="{{ $item['product_id'] }}"
+                                formaction="{{ route('pos.cart.update') }}"
                                 class="w-7 h-7 rounded bg-neutral-100 text-neutral-700 text-sm font-bold">
                                 +
                             </button>
 
-                            <button type="submit" name="remove" value="{{ $item['product_id'] }}">
+                            <button
+                                type="submit"
+                                name="remove"
+                                value="{{ $item['product_id'] }}"
+                                formaction="{{ route('pos.cart.update') }}">
                                 <img src="{{ asset('images/icons/red-remove.svg') }}" class="w-4 h-4" alt="Remove">
                             </button>
 
@@ -75,20 +88,7 @@
             @endforelse
         </div>
 
-        {{-- INFO / ERROR / SUCCESS MESSAGES --}}
-        @if(session('success'))
-            <div class="bg-success-tint text-success p-3 rounded-lg mb-4 text-sm flex items-center justify-between">
-                <span>{{ session('success') }}</span>
-
-                @if(session('receipt_url'))
-                    <a href="{{ session('receipt_url') }}" target="_blank"
-                    class="ml-4 font-semibold text-brand-yellow-deep underline">
-                        View Receipt
-                    </a>
-                @endif
-            </div>
-        @endif
-
+        {{-- INFO / ERROR MESSAGES --}}
         @if(session('cart_warning'))
             <div class="bg-warning-tint text-warning p-3 rounded-lg mb-4 text-sm">
                 {{ session('cart_warning') }}
@@ -144,15 +144,13 @@
             function calculateChange() {
                 const cashReceived = parseFloat(document.getElementById('cash_received').value) || 0;
                 const total = {{ $total }};
-
                 const change = cashReceived - total;
-
                 document.getElementById('change_amount').textContent =
                     '₱ ' + change.toFixed(2);
             }
         </script>
 
-        {{-- CHECKOUT BUTTONS --}}
+        {{-- CHECKOUT BUTTON --}}
         <div class="flex">
             <button type="submit" name="checkout" value="completed"
                     class="flex-1 bg-brand-yellow text-brand-black font-semibold py-3 rounded-lg text-sm">
