@@ -78,6 +78,15 @@ class InventoryController extends Controller
             'description'   => ['nullable', 'string'],
         ]);
 
+        // CHECK FOR DUPLICATE PRODUCT NAME (CASE-INSENSITIVE)
+        $duplicate = Product::whereRaw('LOWER(name) = ?', [strtolower($validated['name'])])->first();
+
+        if ($duplicate) {
+            return back()
+                ->withInput()
+                ->withErrors(['name' => 'A product with this name already exists (' . $duplicate->item_code . '). Please use a different name.']);
+        }
+
         // AUTO-GENERATE ITEM CODE BASED ON CATEGORY
         $validated['item_code'] = $this->generateItemCode($validated['category']);
 
@@ -172,5 +181,44 @@ class InventoryController extends Controller
         $product->update($validated);
 
         return redirect()->route('inventory.index')->with('success', 'Item updated successfully.');
+    }
+
+    // SHOW ADD STOCK FORM
+    public function addStockForm(Product $product)
+    {
+        return view('inventory.add-stock', compact('product'));
+    }
+
+    // PROCESS ADD STOCK
+    public function addStock(Request $request, Product $product)
+    {
+        $validated = $request->validate([
+            'quantity_to_add' => ['required', 'integer', 'min:1'],
+        ]);
+
+        $oldQuantity = $product->quantity;
+        $addedQty    = (int) $validated['quantity_to_add'];
+        $newQuantity = $oldQuantity + $addedQty;
+
+        // UPDATE PRODUCT QUANTITY
+        $product->update(['quantity' => $newQuantity]);
+
+        // LOG STOCK ADDITION
+        StockLog::create([
+            'product_id'      => $product->id,
+            'quantity_before' => $oldQuantity,
+            'quantity_added'  => $addedQty,
+            'quantity_after'  => $newQuantity,
+            'notes'           => 'Stock added via Add Stock',
+        ]);
+
+        AuditLog::record(
+            action: 'stock_added',
+            description: 'Added ' . $addedQty . ' units of ' . $product->name . ' (' . $product->item_code . '). Stock: ' . $oldQuantity . ' → ' . $newQuantity . '.',
+            subjectType: 'Product',
+            subjectId: $product->id,
+        );
+
+        return redirect()->route('inventory.index')->with('success', 'Stock updated successfully.');
     }
 }

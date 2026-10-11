@@ -44,10 +44,8 @@ Route::middleware('auth')->group(function () {
 
     // INVENTORY
     Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
-    Route::get('/inventory/create', [InventoryController::class, 'create'])->name('inventory.create');
-    Route::post('/inventory', [InventoryController::class, 'store'])->name('inventory.store');
-    Route::get('/inventory/{product}/edit', [InventoryController::class, 'edit'])->name('inventory.edit');
-    Route::put('/inventory/{product}', [InventoryController::class, 'update'])->name('inventory.update');
+    Route::get('/inventory/{product}/add-stock', [InventoryController::class, 'addStockForm'])->name('inventory.add-stock.form');
+    Route::patch('/inventory/{product}/add-stock', [InventoryController::class, 'addStock'])->name('inventory.add-stock');
 
     // SALES TRACKING
     Route::get('/sales', [SalesController::class, 'index'])->name('sales.index');
@@ -71,6 +69,12 @@ Route::middleware('auth')->group(function () {
         }
         return $next($request);
     }], function () {
+
+        // INVENTORY MANAGEMENT (ADMIN ONLY)
+        Route::get('/inventory/create', [InventoryController::class, 'create'])->name('inventory.create');
+        Route::post('/inventory', [InventoryController::class, 'store'])->name('inventory.store');
+        Route::get('/inventory/{product}/edit', [InventoryController::class, 'edit'])->name('inventory.edit');
+        Route::put('/inventory/{product}', [InventoryController::class, 'update'])->name('inventory.update');
 
         // USER MANAGEMENT
         Route::get('/users', [UserController::class, 'index'])->name('users.index');

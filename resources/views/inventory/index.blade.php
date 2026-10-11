@@ -30,10 +30,13 @@
                 </a>
             </div>
 
-            <a href="{{ route('inventory.create') }}"
-               class="bg-brand-yellow text-brand-black font-heading font-bold px-4 py-2 rounded-lg text-sm">
-                + Add Item
-            </a>
+            {{-- ONLY ADMIN CAN ADD NEW ITEMS --}}
+            @if(auth()->user()->role === 'admin')
+                <a href="{{ route('inventory.create') }}"
+                   class="bg-brand-yellow text-brand-black font-heading font-bold px-4 py-2 rounded-lg text-sm">
+                    + Add Item
+                </a>
+            @endif
 
         </div>
 
@@ -55,8 +58,6 @@
             </div>
 
             {{-- SEARCH --}}
-                           
-
             <div class="flex-1 min-w-[200px]">
                 <label class="block text-xs font-semibold text-neutral-700 mb-1">Search</label>
                 <div class="flex h-10 items-center flex-1 bg-white border border-neutral-300 rounded-lg py-2 px-3 gap-2 focus-within:border-black focus-within:border-2">
@@ -90,7 +91,7 @@
                         <th class="p-3">Unit Cost</th>
                         <th class="p-3">Selling Price</th>
                         <th class="p-3">Status</th>
-                        <th class="p-3"></th>
+                        <th class="p-3">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -113,9 +114,19 @@
                                 @endif
                             </td>
                             <td class="p-3">
-                                <a href="{{ route('inventory.edit', $product->id) }}">
-                                    <img src="{{ asset('images/icons/grey-edit.svg') }}" class="w-4 h-4" alt="Edit">
-                                </a>
+                                <div class="flex items-center gap-3">
+                                    {{-- ADD STOCK BUTTON — VISIBLE TO ALL ROLES --}}
+                                    <a href="{{ route('inventory.add-stock.form', $product->id) }}" title="Add Stock">
+                                        <img src="{{ asset('images/icons/black-add.svg') }}" class="w-3 h-3" alt="Add Stock">
+                                    </a>
+
+                                    {{-- EDIT BUTTON — ADMIN ONLY --}}
+                                    @if(auth()->user()->role === 'admin')
+                                        <a href="{{ route('inventory.edit', $product->id) }}" title="Edit Item">
+                                            <img src="{{ asset('images/icons/black-edit.svg') }}" class="w-4 h-4" alt="Edit">
+                                        </a>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                     @empty
