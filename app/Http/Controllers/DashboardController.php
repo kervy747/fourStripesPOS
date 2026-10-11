@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AuditLog;
 use App\Models\Product;
 use App\Models\SaleItem;
 use Illuminate\Http\Request;
@@ -21,15 +20,13 @@ class DashboardController extends Controller
         // OUT OF STOCK PRODUCT LIST
         $outOfStockProducts = Product::where('quantity', 0)
             ->orderBy('name')
-            ->limit(5)
-            ->get();
+            ->paginate(5, ['*'], 'out_page');
 
         // LOW STOCK PRODUCT LIST
         $lowStockProducts = Product::whereColumn('quantity', '<=', 'reorder_level')
             ->where('quantity', '>', 0)
             ->orderBy('quantity')
-            ->limit(5)
-            ->get();
+            ->paginate(5, ['*'], 'low_page');
 
         // TOP PRODUCTS THIS MONTH
         $topProducts = SaleItem::selectRaw('product_id, item_name, SUM(quantity) as total_units, SUM(subtotal) as total_revenue')
