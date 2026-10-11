@@ -55,7 +55,14 @@ class UserController extends Controller
             'phone_number.regex' => 'Phone number must be 11 digits and start with 0.',
         ]);
 
-        User::create($validated);
+        $newUser = User::create($validated);
+
+        AuditLog::record(
+            action: 'user_management',
+            description: 'Created new ' . $newUser->role . ' account for ' . $newUser->first_name . ' ' . $newUser->last_name . '.',
+            subjectType: 'User',
+            subjectId: $newUser->id,
+        );
 
         return redirect()->route('users.index')->with('success', 'User added successfully.');
     }
@@ -101,6 +108,13 @@ class UserController extends Controller
 
         $user->update($validated);
 
+        AuditLog::record(
+            action: 'user_management',
+            description: 'Updated account for ' . $user->first_name . ' ' . $user->last_name . ' (' . $user->role . ').',
+            subjectType: 'User',
+            subjectId: $user->id,
+        );
+
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 
@@ -114,7 +128,15 @@ class UserController extends Controller
 
         $user->update(['is_active' => ! $user->is_active]);
 
+        $status  = $user->is_active ? 'activated' : 'deactivated';
         $message = $user->is_active ? 'User activated successfully.' : 'User deactivated successfully.';
+
+        AuditLog::record(
+            action: 'user_management',
+            description: ucfirst($status) . ' account for ' . $user->first_name . ' ' . $user->last_name . ' (' . $user->role . ').',
+            subjectType: 'User',
+            subjectId: $user->id,
+        );
 
         return redirect()->route('users.index')->with('success', $message);
     }

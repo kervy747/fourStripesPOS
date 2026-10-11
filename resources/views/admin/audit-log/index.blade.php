@@ -20,7 +20,8 @@
                     <option value="purchase"     @selected(request('action') === 'purchase')>Purchase</option>
                     <option value="print_report" @selected(request('action') === 'print_report')>Print Report</option>
                     <option value="backup"       @selected(request('action') === 'backup')>Backup</option>
-                    <option value="stock_added"  @selected(request('action') === 'stock_added')>Stock Added</option>
+                    <option value="stock_added"      @selected(request('action') === 'stock_added')>Stock Added</option>
+                    <option value="user_management" @selected(request('action') === 'user_management')>User Management</option>
                 </select>
             </div>
 
@@ -82,23 +83,25 @@
                             <td class="px-4 py-3">
                                 @php
                                     $badgeClass = match($log->action) {
-                                        'login'        => 'bg-info-tint text-info',
-                                        'logout'       => 'bg-neutral-100 text-neutral-600',
-                                        'purchase'     => 'bg-success-tint text-success',
-                                        'print_report' => 'bg-brand-yellow-tint text-brand-yellow-deep',
-                                        'backup'       => 'bg-warning-tint text-warning',
-                                        'stock_added'  => 'bg-success-tint text-success',
-                                        default        => 'bg-neutral-100 text-neutral-600',
+                                        'login'           => 'bg-info-tint text-info',
+                                        'logout'          => 'bg-neutral-100 text-neutral-600',
+                                        'purchase'        => 'bg-success-tint text-success',
+                                        'print_report'    => 'bg-brand-yellow-tint text-brand-yellow-deep',
+                                        'backup'          => 'bg-warning-tint text-warning',
+                                        'stock_added'     => 'bg-success-tint text-success',
+                                        'user_management' => 'bg-danger-tint text-danger',
+                                        default           => 'bg-neutral-100 text-neutral-600',
                                     };
 
                                     $label = match($log->action) {
-                                        'login'        => 'Login',
-                                        'logout'       => 'Logout',
-                                        'purchase'     => 'Purchase',
-                                        'print_report' => 'Print Report',
-                                        'backup'       => 'Backup',
-                                        'stock_added'  => 'Stock Added',
-                                        default        => $log->action,
+                                        'login'           => 'Login',
+                                        'logout'          => 'Logout',
+                                        'purchase'        => 'Purchase',
+                                        'print_report'    => 'Print Report',
+                                        'backup'          => 'Backup',
+                                        'stock_added'     => 'Stock Added',
+                                        'user_management' => 'User Management',
+                                        default           => $log->action,
                                     };
                                 @endphp
                                 <span class="px-2 py-1 rounded-full text-xs font-heading {{ $badgeClass }}">

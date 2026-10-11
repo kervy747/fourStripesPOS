@@ -3,11 +3,15 @@
 
     <h2 class="font-heading font-bold text-lg text-neutral-900 mb-4">Current Transaction</h2>
 
-    {{-- RECEIPT AUTO-POPUP --}}
-    @if(session('receipt_popup'))
-        <script>
-            window.open('{{ session('receipt_popup') }}', '_blank');
-        </script>
+    {{-- RECEIPT LINK AFTER CHECKOUT --}}
+    @if(session('receipt_url'))
+        <div class="bg-success-tint text-success text-sm font-semibold px-4 py-3 rounded-lg mb-3 flex items-center justify-between">
+            <span>Sale completed!</span>
+            <a href="{{ session('receipt_url') }}" target="_blank"
+               class="underline text-success font-bold">
+                Open Receipt ↗
+            </a>
+        </div>
     @endif
 
     <form id="cart-form" method="POST" action="{{ route('pos.cart.update') }}" class="flex flex-col flex-1 min-h-0">
@@ -118,16 +122,18 @@
                     type="number"
                     step="0.01"
                     min="0"
+                    max="1000000000"
                     name="cash_received"
                     id="cash_received"
                     value="{{ $cashReceived }}"
                     placeholder="0.00"
                     class="flex-1 border border-neutral-200 rounded-lg py-2 px-3 text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                    oninput="calculateChange()"
+                    oninput="calculateChange(); validateCash(this);"
                     onkeydown="if(event.key === 'Enter'){ event.preventDefault(); }"
                 >
             </div>
 
+            <p id="cash_error" class="text-xs text-danger mt-1 hidden">Amount cannot exceed ₱1,000,000,000.</p>
             <x-error name="cash_received" />
         </div>
 
@@ -147,6 +153,17 @@
                 const change = cashReceived - total;
                 document.getElementById('change_amount').textContent =
                     '₱ ' + change.toFixed(2);
+            }
+
+            function validateCash(input) {
+                const error = document.getElementById('cash_error');
+                if (parseFloat(input.value) > 1000000000) {
+                    error.classList.remove('hidden');
+                    input.value = 1000000000;
+                    calculateChange();
+                } else {
+                    error.classList.add('hidden');
+                }
             }
         </script>
 

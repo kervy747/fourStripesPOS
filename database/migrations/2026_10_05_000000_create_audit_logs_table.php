@@ -18,6 +18,7 @@ return new class extends Migration
                 'print_report',
                 'backup',
                 'stock_added',
+                'user_management',
             ]);
             $table->string('description');
             $table->string('subject_type')->nullable();

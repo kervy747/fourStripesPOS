@@ -179,13 +179,13 @@
                         class="px-4 py-2 rounded-lg text-sm font-semibold {{ request('category') === 'machines' ? 'bg-brand-yellow text-brand-black' : 'bg-neutral-0 text-neutral-700' }}">
                             Machines
                         </a>
-                        <a href="{{ route('pos.index', ['category' => 'tools', 'search' => request('search')]) }}"
-                        class="px-4 py-2 rounded-lg text-sm font-semibold {{ request('category') === 'tools' ? 'bg-brand-yellow text-brand-black' : 'bg-neutral-0 text-neutral-700' }}">
-                            Tools
-                        </a>
                         <a href="{{ route('pos.index', ['category' => 'accessories', 'search' => request('search')]) }}"
                         class="px-4 py-2 rounded-lg text-sm font-semibold {{ request('category') === 'accessories' ? 'bg-brand-yellow text-brand-black' : 'bg-neutral-0 text-neutral-700' }}">
                             Accessories
+                        </a>
+                        <a href="{{ route('pos.index', ['category' => 'tools', 'search' => request('search')]) }}"
+                        class="px-4 py-2 rounded-lg text-sm font-semibold {{ request('category') === 'tools' ? 'bg-brand-yellow text-brand-black' : 'bg-neutral-0 text-neutral-700' }}">
+                            Tools
                         </a>
                     </div>
 

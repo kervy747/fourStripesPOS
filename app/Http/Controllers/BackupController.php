@@ -46,7 +46,7 @@ class BackupController extends Controller
             return back()->with('error', 'Backup failed: ' . implode(' ', $output));
         }
 
-        // LOG THE ACTION
+        // LOG BEFORE SENDING — FILE IS CONFIRMED TO EXIST AT THIS POINT
         AuditLog::record(
             action: 'backup',
             description: 'Database backup downloaded: ' . $fileName,

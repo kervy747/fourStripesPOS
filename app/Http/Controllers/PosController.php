@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AuditLog;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Sale;
@@ -281,7 +280,7 @@ class PosController extends Controller
             'customer_name'    => ['required', 'string'],
             'customer_phone'   => ['nullable', 'string', 'regex:/^(\d{7}|\d{8}|0\d{10})$/'],
             'customer_address' => ['required', 'string'],
-            'cash_received'    => ['required', 'numeric', 'min:0'],
+            'cash_received'    => ['required', 'numeric', 'min:0', 'max:1000000000'],
         ], [
             'customer_phone.regex' => 'Invalid phone number. Must be 7 digits (local landline), 8 digits (Metro Manila landline), or 11 digits starting with 0 (mobile).',
         ]);
@@ -352,14 +351,6 @@ class PosController extends Controller
             }
         }
 
-        // LOG THE SALE
-        AuditLog::record(
-            action: 'purchase',
-            description: 'Sale #' . str_pad($sale->id, 4, '0', STR_PAD_LEFT) . ' completed for ₱' . number_format($sale->total, 2) . ' — ' . $customer->name . '.',
-            subjectType: 'Sale',
-            subjectId: $sale->id,
-        );
-
         // CLEAR CART AND CUSTOMER SESSION DATA
         session()->forget([
             'cart',
@@ -373,6 +364,6 @@ class PosController extends Controller
         ]);
 
         return redirect()->route('pos.index')
-            ->with('receipt_popup', route('receipts.show', $sale->id));
+            ->with('receipt_url', route('receipts.show', $sale->id));
     }
 }
