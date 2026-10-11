@@ -8,19 +8,54 @@
         {{-- LEFT: TRANSACTIONS --}}
         <div class="flex-1 p-6 overflow-y-auto">
 
-            {{-- SEARCH --}}
-            <form method="GET" action="{{ route('sales.index') }}" class="mb-4">
+            {{-- FILTER BAR --}}
+            <form method="GET" action="{{ route('sales.index') }}" class="flex flex-wrap items-end gap-3 mb-6 bg-white rounded-xl px-4 py-5 shadow-sm">
                 <input type="hidden" name="status" value="{{ $status }}">
-                <div class="flex h-10 items-center flex-1 bg-white border border-neutral-300 rounded-lg py-2 px-3 gap-2 focus-within:border-black focus-within:border-2">
-                    <img src="{{ asset('images/icons/black-search.svg') }}" alt="Search" class="w-4 h-4 opacity-60">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by OR number or customer..." class="flex-1 text-sm focus:outline-none">
+
+                {{-- DATE FROM --}}
+                <div>
+                    <label class="block text-sm font-semibold text-neutral-900 mb-1 font-body">Date From</label>
+                    <input
+                        type="date"
+                        name="date_from"
+                        value="{{ request('date_from') }}"
+                        class="h-10 bg-white border border-neutral-300 rounded-lg px-3 text-sm focus:outline-none focus:border-black focus:border-2"
+                    >
                 </div>
+
+                {{-- DATE TO --}}
+                <div>
+                    <label class="block text-sm font-semibold text-neutral-900 mb-1 font-body">Date To</label>
+                    <input
+                        type="date"
+                        name="date_to"
+                        value="{{ request('date_to') }}"
+                        class="h-10 bg-white border border-neutral-300 rounded-lg px-3 text-sm focus:outline-none focus:border-black focus:border-2"
+                    >
+                </div>
+
+                {{-- SEARCH --}}
+                <div class="flex-1 min-w-48">
+                    <label class="block text-sm font-semibold text-neutral-900 mb-1 font-body">Search</label>
+                    <div class="flex h-10 items-center bg-white border border-neutral-300 rounded-lg py-2 px-3 gap-2 focus-within:border-black focus-within:border-2">
+                        <img src="{{ asset('images/icons/black-search.svg') }}" alt="Search" class="w-4 h-4 opacity-60">
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by OR number or customer..." class="flex-1 text-sm focus:outline-none">
+                    </div>
+                </div>
+
+                {{-- FILTER BUTTON --}}
+                <x-button type="submit" variant="primary" class="h-10">Filter</x-button>
+
+                {{-- CLEAR BUTTON --}}
+                <a href="{{ route('sales.index', ['status' => $status]) }}" class="h-10 flex items-center px-4 border border-neutral-300 rounded-lg text-sm text-neutral-600 hover:bg-neutral-100">
+                    Clear
+                </a>
             </form>
 
             {{-- TRANSACTIONS TABLE --}}
             <div class="bg-neutral-0 rounded-xl border border-neutral-200 overflow-hidden">
                 <table class="w-full text-sm font-body">
-                    <thead class="bg- text-neutral-600 text-xs uppercase font-heading">
+                    <thead class="text-neutral-600 text-xs uppercase font-heading">
                         <tr>
                             <th class="text-left px-4 py-3">OR No.</th>
                             <th class="text-left px-4 py-3">Date &amp; Time</th>
@@ -124,6 +159,18 @@
                 <div class="flex justify-between items-center border-t border-neutral-200 pt-4 mb-6">
                     <span class="font-heading font-bold text-neutral-900">Total Paid</span>
                     <span class="font-heading font-bold text-brand-yellow-deep text-lg">₱ {{ number_format($selectedSale->total, 2) }}</span>
+                </div>
+
+                {{-- RECEIPT ACTIONS --}}
+                <div class="flex gap-2 mb-4">
+                    <a href="{{ route('receipts.show', $selectedSale) }}" target="_blank"
+                       class="flex-1 h-10 flex items-center justify-center border border-neutral-300 rounded-lg text-sm text-neutral-700 hover:bg-neutral-100 font-heading font-semibold">
+                        View Receipt
+                    </a>
+                    <a href="{{ route('receipts.download', $selectedSale) }}"
+                       class="flex-1 h-10 flex items-center justify-center border border-neutral-300 rounded-lg text-sm text-neutral-700 hover:bg-neutral-100 font-heading font-semibold">
+                        Download PDF
+                    </a>
                 </div>
 
                 {{-- ACTIONS --}}

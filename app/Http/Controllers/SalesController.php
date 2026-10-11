@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AuditLog;
 use App\Models\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,10 +14,23 @@ class SalesController extends Controller
         // BASE QUERY
         $query = Sale::with(['customer', 'user', 'items.product']);
 
+        // STAFF CAN ONLY SEE THEIR OWN SALES; ADMIN SEES ALL
+        if (!Auth::user()->isAdmin()) {
+            $query->where('user_id', Auth::id());
+        }
+
         // STATUS TAB FILTER (all / pending / completed)
         $status = $request->query('status', 'all');
         if ($status === 'pending' || $status === 'completed') {
             $query->where('status', $status);
+        }
+
+        // DATE FILTER
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->query('date_from'));
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->query('date_to'));
         }
 
         // SEARCH BY OR NUMBER (E.G. "0009") OR CUSTOMER NAME
@@ -48,9 +60,9 @@ class SalesController extends Controller
         }
 
         return view('sales.index', [
-            'sales' => $sales,
+            'sales'        => $sales,
             'selectedSale' => $selectedSale,
-            'status' => $status,
+            'status'       => $status,
         ]);
     }
 }
