@@ -6,10 +6,10 @@
     <style>
         body {
             font-family: 'DejaVu Sans', sans-serif;
-            font-size: 11px;
+            font-size: 9px;
             color: #111;
             margin: 0;
-            padding: 10px;
+            padding: 2px;
         }
         .center { text-align: center; }
         .right { text-align: right; }
@@ -23,7 +23,7 @@
             border-collapse: collapse;
         }
         td {
-            padding: 2px 0;
+            padding: 3px 0;
             vertical-align: top;
         }
         .status-badge {
@@ -34,18 +34,17 @@
             font-size: 10px;
         }
         .footer {
-            margin-top: 10px;
+            margin-top: 6px;
             text-align: center;
-            font-size: 10px;
+            font-size: 8px;
             color: #555;
         }
     </style>
 </head>
 <body>
 
-    <div class="center bold" style="font-size:14px;">Four Stripes and Machine Corporation</div>
-    <div class="center" style="font-size:10px;"> YLG Bldg Door 5, McArthur Highway, Bago Aplaya, Davao City, Philippines</div>
-    <div class="center" style="font-size:10px;">+63 919 287 2915</div>
+    <div class="center bold" style="font-size:11px;">Four Stripes and Machine Corporation</div>
+    <div class="center" style="font-size:8px;">YLG Bldg Door 5, McArthur Highway, Bago Aplaya, Davao City, Philippines</div>
 
     <div class="divider"></div>
 
@@ -88,22 +87,22 @@
     <table>
         <thead>
             <tr class="bold">
-                <td>Item</td>
-                <td class="right">Qty</td>
-                <td class="right">Price</td>
-                <td class="right">Subtotal</td>
+                <td style="width:35%;">Item</td>
+                <td class="right" style="width:15%;">Qty</td>
+                <td class="right" style="width:22%;">Price</td>
+                <td class="right" style="width:28%;">Subtotal</td>
             </tr>
         </thead>
         <tbody>
             @foreach($sale->items as $item)
                 <tr>
                     <td>
-                        {{ $item->item_name }}<br>
-                        <span style="font-size:9px; color:#666;">{{ $item->item_code }}</span>
+                        <span style="font-size:7px;">{{ $item->item_name }}</span><br>
+                        <span style="font-size:6px; color:#666;">{{ $item->item_code }}</span>
                     </td>
-                    <td class="right">{{ $item->quantity }}</td>
-                    <td class="right">{{ number_format($item->price, 2) }}</td>
-                    <td class="right">{{ number_format($item->subtotal, 2) }}</td>
+                    <td class="right" style="font-size:7px;">{{ $item->quantity }}</td>
+                    <td class="right" style="font-size:7px;">{{ number_format($item->price, 2) }}</td>
+                    <td class="right" style="font-size:7px;">{{ number_format($item->subtotal, 2) }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -111,9 +110,27 @@
 
     <div class="divider"></div>
 
+    @php
+        $vatableAmount = $sale->total / 1.12;
+        $vatAmount     = $sale->total - $vatableAmount;
+    @endphp
+
     <table>
-        <tr class="bold" style="font-size:13px;">
-            <td>Total</td>
+        <tr>
+            <td>VATable Sales</td>
+            <td class="right">&#8369; {{ number_format($vatableAmount, 2) }}</td>
+        </tr>
+        <tr>
+            <td>VAT 12%</td>
+            <td class="right">&#8369; {{ number_format($vatAmount, 2) }}</td>
+        </tr>
+    </table>
+
+    <div class="divider"></div>
+
+    <table>
+        <tr class="bold" style="font-size:10px;">
+            <td>Total (VAT Incl.)</td>
             <td class="right">&#8369; {{ number_format($sale->total, 2) }}</td>
         </tr>
         <tr>
@@ -137,7 +154,8 @@
     <div class="divider"></div>
 
     <div class="footer">
-        This is a temporary receipt. Please keep this for your records. Thank you for your purchase!
+        This is a temporary receipt. Please keep this for your records. Thank you for your purchase!<br>
+        Contact: +63 919 287 2915
     </div>
 
 </body>

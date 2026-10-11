@@ -5,7 +5,7 @@
     <title>Sales Report</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; font-size: 11px; color: #000000; background: #ffffff; padding: 40px; }
+        body { font-family: 'DejaVu Sans', sans-serif; font-size: 11px; color: #000000; background: #ffffff; padding: 40px; }
         .company-name { font-size: 18px; font-weight: bold; margin-bottom: 2px; }
         .report-title { font-size: 13px; font-weight: bold; margin-bottom: 2px; }
         .report-meta { font-size: 11px; margin-bottom: 4px; }
