@@ -49,7 +49,7 @@
             <table class="w-full text-sm font-body">
 
                 {{-- TABLE HEADER --}}
-                <thead class="bg-neutral-950 text-neutral-0">
+                <thead class="bg-white text-black">
                     <tr>
                         <th class="px-4 py-3 text-left font-heading text-xs uppercase tracking-wide">#</th>
                         <th class="px-4 py-3 text-left font-heading text-xs uppercase tracking-wide">User</th>

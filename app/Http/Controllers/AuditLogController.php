@@ -24,7 +24,7 @@ class AuditLogController extends Controller
             $query->whereDate('created_at', $request->date);
         }
 
-        $logs = $query->paginate(20)->withQueryString();
+        $logs = $query->paginate(10)->withQueryString();
 
         return view('admin.audit-log.index', compact('logs'));
     }
