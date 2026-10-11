@@ -216,7 +216,7 @@
 
                         {{-- PRODUCTS --}}
                         @forelse($products as $product)
-                            <form method="POST" action="{{ route('pos.add', $product) }}">
+                            <form class="product-add-form" method="POST" action="{{ route('pos.add', $product) }}">
                                 @csrf
                                 <input type="hidden" name="customer_name"    value="{{ $customerName }}">
                                 <input type="hidden" name="customer_phone"   value="{{ $customerPhone }}">
@@ -269,6 +269,24 @@
                         @endforelse
 
                     </div>
+
+                    {{-- SYNC VISIBLE CUSTOMER FIELDS INTO PRODUCT FORM HIDDEN INPUTS --}}
+                    <script>
+                        document.querySelectorAll('.product-add-form').forEach(function (form) {
+                            form.addEventListener('submit', function () {
+                                var visibleName    = document.querySelector('input[name="customer_name"][form="cart-form"]');
+                                var visiblePhone   = document.querySelector('input[name="customer_phone"][form="cart-form"]');
+                                var visibleAddress = document.querySelector('input[name="customer_address"][form="cart-form"]');
+                                var visibleCash    = document.getElementById('cash_received');
+
+                                if (visibleName)    form.querySelector('input[name="customer_name"]').value    = visibleName.value;
+                                if (visiblePhone)   form.querySelector('input[name="customer_phone"]').value   = visiblePhone.value;
+                                if (visibleAddress) form.querySelector('input[name="customer_address"]').value = visibleAddress.value;
+                                if (visibleCash)    form.querySelector('input[name="cash_received"]').value    = visibleCash.value;
+                            });
+                        });
+                    </script>
+
                 </div>
 
                 {{-- PAGINATION (DEFAULT LARAVEL TAILWIND STYLE) --}}

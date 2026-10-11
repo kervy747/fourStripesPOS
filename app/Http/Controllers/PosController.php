@@ -145,8 +145,12 @@ class PosController extends Controller
             if ($request->filled('customer_name')) {
                 session(['cart_customer_name' => $request->input('customer_name')]);
             }
-            session(['cart_customer_phone'   => $request->input('customer_phone', '')]);
-            session(['cart_customer_address' => $request->input('customer_address', '')]);
+            if ($request->filled('customer_phone')) {
+                session(['cart_customer_phone' => $request->input('customer_phone')]);
+            }
+            if ($request->filled('customer_address')) {
+                session(['cart_customer_address' => $request->input('customer_address')]);
+            }
         }
 
         session(['cart_cash_received' => $request->input('cash_received', '')]);

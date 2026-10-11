@@ -26,7 +26,7 @@
                             <span>Category</span>
                         </div>
                         @foreach($outOfStockProducts as $product)
-                            <div class="flex items-center justify-between px-4 py-3 border-b border-neutral-100 bg-white">
+                            <div class="flex items-center justify-between px-4 py-3 border-b border-neutral-100">
                                 <div>
                                     <p class="text-sm font-semibold text-neutral-900">{{ $product->name }}</p>
                                     <p class="text-xs text-neutral-400">{{ $product->item_code }}</p>
