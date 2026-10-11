@@ -31,7 +31,7 @@ class LoginController extends Controller
                 description: 'User logged in.',
             );
 
-            return redirect()->intended(route('pos.index'));
+            return redirect()->intended(route('dashboard.index'));
         }
 
         return back()->withErrors([
