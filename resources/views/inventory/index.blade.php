@@ -87,7 +87,7 @@
                         <th class="p-3">Item Name</th>
                         <th class="p-3">Category</th>
                         <th class="p-3">Stock Qty</th>
-                        <th class="p-3">Reorder Level</th>
+                        <th class="p-3">Restock Level</th>
                         <th class="p-3">Unit Cost</th>
                         <th class="p-3">Selling Price</th>
                         <th class="p-3">Status</th>
