@@ -10,7 +10,7 @@ use Illuminate\Support\Carbon;
 class DashboardController extends Controller
 {
     // DASHBOARD INDEX
-    public function index() {
+    public function index(Request $request) {
 
         $totalItems      = Product::count();
         $inStockCount    = Product::whereColumn('quantity', '>', 'reorder_level')->count();
@@ -28,15 +28,30 @@ class DashboardController extends Controller
             ->orderBy('quantity')
             ->paginate(5, ['*'], 'low_page');
 
-        // TOP PRODUCTS THIS MONTH
-        $topProducts = SaleItem::selectRaw('product_id, item_name, SUM(quantity) as total_units, SUM(subtotal) as total_revenue')
-            ->whereHas('sale', function ($q) {
-                $q->whereMonth('created_at', Carbon::now()->month)
-                  ->whereYear('created_at', Carbon::now()->year);
+        // FILTER VALUES FROM REQUEST
+        $selectedMonth = $request->input('month', Carbon::now()->month);
+        $selectedYear  = $request->input('year', Carbon::now()->year);
+
+        // TOP PRODUCTS BAR CHART DATA
+        $topProducts = SaleItem::selectRaw('item_name, SUM(quantity) as total_units, SUM(subtotal) as total_revenue')
+            ->whereHas('sale', function ($q) use ($selectedMonth, $selectedYear) {
+                $q->whereMonth('created_at', $selectedMonth)
+                  ->whereYear('created_at', $selectedYear);
             })
-            ->groupBy('product_id', 'item_name')
+            ->groupBy('item_name')
             ->orderByDesc('total_units')
+            ->limit(10)
             ->get();
+
+        // AVAILABLE YEARS FOR FILTER (FROM FIRST SALE UP TO NOW)
+        $years = SaleItem::selectRaw('YEAR(created_at) as year')
+            ->groupBy('year')
+            ->orderByDesc('year')
+            ->pluck('year');
+
+        if ($years->isEmpty()) {
+            $years = collect([Carbon::now()->year]);
+        }
 
         return view('dashboard.index', compact(
             'totalItems',
@@ -45,7 +60,10 @@ class DashboardController extends Controller
             'outOfStockCount',
             'outOfStockProducts',
             'lowStockProducts',
-            'topProducts'
+            'topProducts',
+            'selectedMonth',
+            'selectedYear',
+            'years'
         ));
     }
 }

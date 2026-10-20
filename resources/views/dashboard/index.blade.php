@@ -75,58 +75,137 @@
 
         </div>
 
-        {{-- TOP PRODUCTS THIS MONTH --}}
+        {{-- TOP PRODUCTS BAR CHART --}}
         <div class="bg-neutral-0 rounded-xl shadow-sm p-4">
-            <div class="text-md font-semibold text-brand-black mb-3">
-                Top Products — {{ \Carbon\Carbon::now()->format('F Y') }}
+
+            {{-- CHART HEADER + FILTER --}}
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                <div class="text-md font-semibold text-brand-black">Top Products</div>
+
+                {{-- MONTH / YEAR FILTER --}}
+                <form method="GET" action="{{ route('dashboard.index') }}" class="flex items-center gap-2">
+                    <select name="month" onchange="this.form.submit()"
+                        class="text-sm border border-neutral-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black">
+                        @foreach(range(1, 12) as $m)
+                            <option value="{{ $m }}" {{ $selectedMonth == $m ? 'selected' : '' }}>
+                                {{ \Carbon\Carbon::create()->month($m)->format('F') }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    <select name="year" onchange="this.form.submit()"
+                        class="text-sm border border-neutral-300 rounded-lg px-3 py-2 focus:outline-none focus:border-black">
+                        @foreach($years as $y)
+                            <option value="{{ $y }}" {{ $selectedYear == $y ? 'selected' : '' }}>
+                                {{ $y }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
             </div>
 
+            {{-- CHART --}}
             @if($topProducts->isEmpty())
-                <p class="text-sm text-neutral-500">No sales recorded yet this month.</p>
-            @else
-                <div class="rounded-xl shadow-[0_0_1px_0px_black] overflow-hidden">
-
-                    {{-- TABLE HEADER --}}
-                    <div class="grid grid-cols-2 border-b border-neutral-200 bg-white">
-                        <div class="flex items-center gap-4 px-4 py-2 border-r border-neutral-200 text-xs font-semibold text-neutral-500">
-                            <span class="flex-1">Product Name</span>
-                            <span class="w-16 text-right">Units</span>
-                            <span class="w-24 text-right">Amount</span>
-                        </div>
-                        <div class="flex items-center gap-4 px-4 py-2 text-xs font-semibold text-neutral-500">
-                            <span class="flex-1">Product Name</span>
-                            <span class="w-16 text-right">Units</span>
-                            <span class="w-24 text-right">Amount</span>
-                        </div>
-                    </div>
-
-                    {{-- TABLE ROWS (2 PRODUCTS PER ROW) --}}
-                    @foreach($topProducts->chunk(2) as $pair)
-                        <div class="grid grid-cols-2 border-b border-neutral-100 bg-white">
-
-                            {{-- LEFT ENTRY --}}
-                            <div class="flex items-center gap-4 px-4 py-3 border-r border-neutral-200">
-                                <span class="flex-1 text-sm font-semibold text-neutral-900">{{ $pair->first()->item_name }}</span>
-                                <span class="w-16 text-right text-sm text-neutral-600">{{ $pair->first()->total_units }} units</span>
-                                <span class="w-24 text-right text-sm font-semibold text-brand-yellow-deep">₱ {{ number_format($pair->first()->total_revenue, 2) }}</span>
-                            </div>
-
-                            {{-- RIGHT ENTRY (MAY BE EMPTY IF ODD NUMBER) --}}
-                            @if($pair->count() > 1)
-                                <div class="flex items-center gap-4 px-4 py-3">
-                                    <span class="flex-1 text-sm font-semibold text-neutral-900">{{ $pair->last()->item_name }}</span>
-                                    <span class="w-16 text-right text-sm text-neutral-600">{{ $pair->last()->total_units }} units</span>
-                                    <span class="w-24 text-right text-sm font-semibold text-brand-yellow-deep">₱ {{ number_format($pair->last()->total_revenue, 2) }}</span>
-                                </div>
-                            @else
-                                <div class="px-4 py-3"></div>
-                            @endif
-
-                        </div>
-                    @endforeach
-
+                <div class="flex items-center justify-center h-48 text-sm text-neutral-500">
+                    No sales data for {{ \Carbon\Carbon::create()->month($selectedMonth)->format('F') }} {{ $selectedYear }}.
                 </div>
+            @else
+                <div class="relative h-80">
+                    <canvas id="topProductsChart"></canvas>
+                </div>
+
+                <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+                <script>
+                    const labels   = @json($topProducts->pluck('item_name'));
+                    const units    = @json($topProducts->pluck('total_units'));
+                    const revenue  = @json($topProducts->pluck('total_revenue'));
+
+                    const ctx = document.getElementById('topProductsChart').getContext('2d');
+
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'Units Sold',
+                                    data: units,
+                                    backgroundColor: '#FCBC18',
+                                    borderRadius: 6,
+                                    yAxisID: 'yUnits',
+                                },
+                                {
+                                    label: 'Revenue (₱)',
+                                    data: revenue,
+                                    backgroundColor: '#0F1113',
+                                    borderRadius: 6,
+                                    yAxisID: 'yRevenue',
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                    labels: {
+                                        font: { family: 'Poppins', size: 12 }
+                                    }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            if (context.dataset.label === 'Revenue (₱)') {
+                                                return ' ₱ ' + Number(context.raw).toLocaleString('en-PH', { minimumFractionDigits: 2 });
+                                            }
+                                            return ' ' + context.raw + ' units';
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                yUnits: {
+                                    type: 'linear',
+                                    position: 'left',
+                                    ticks: {
+                                        font: { family: 'Poppins', size: 11 },
+                                        stepSize: 1,
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: 'Units Sold',
+                                        font: { family: 'Poppins', size: 11 }
+                                    }
+                                },
+                                yRevenue: {
+                                    type: 'linear',
+                                    position: 'right',
+                                    grid: { drawOnChartArea: false },
+                                    ticks: {
+                                        font: { family: 'Poppins', size: 11 },
+                                        callback: function(value) {
+                                            return '₱ ' + Number(value).toLocaleString('en-PH');
+                                        }
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: 'Revenue (₱)',
+                                        font: { family: 'Poppins', size: 11 }
+                                    }
+                                },
+                                x: {
+                                    ticks: {
+                                        font: { family: 'Poppins', size: 11 },
+                                        maxRotation: 30,
+                                    }
+                                }
+                            }
+                        }
+                    });
+                </script>
             @endif
+
         </div>
 
     </main>
