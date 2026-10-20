@@ -167,23 +167,3 @@ FourStripesPOS/
 └── public/
     └── ... (standard Laravel public assets)
 ```
-
-## Build Order (Planned)
-
-1. Auth & Users
-2. Layout & Navigation shell
-3. Products & Inventory
-4. Customers
-5. POS + Sales
-6. Shipping Calculator
-7. Receipts (PDF)
-8. Reports (BIR export)
-9. Audit Log
-10. User Management (Admin)
-
-## Notes
-
-- No dashboard page — after login, both Admin and Staff land directly on **POS**.
-- Suppliers are outside the system's scope — ordering is handled manually by the Owner via Messenger.
-- Payment processing is not implemented (school project scope) — cash/cashless is recorded for reference only, confirmed manually outside the system.
-- "Print" refers to PDF generation, not physical printing.
