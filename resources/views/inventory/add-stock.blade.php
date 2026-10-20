@@ -2,8 +2,8 @@
 
     <x-page-header title="Add Stock" subtitle="Add new stock to an existing product" />
 
-    <main class="p-6 flex-1">
-        <div class="bg-neutral-0 rounded-xl p-6 shadow-sm max-w-lg">
+    <main class="p-6 flex-1  flex items-center justify-center">
+        <div class="w-100 bg-neutral-0 rounded-xl p-6 shadow-sm max-w-lg">
 
             {{-- PRODUCT SUMMARY --}}
             <div class="bg-neutral-100 rounded-lg p-4 mb-6 flex flex-col gap-1">

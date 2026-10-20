@@ -2,7 +2,7 @@
 
     <x-page-header title="Add Item" subtitle="Add a new product to inventory" />
 
-    <main class="p-6 flex-1">
+    <main class="p-6 flex-1 flex items-center justify-center">
         <div class="bg-neutral-0 rounded-xl p-6 shadow-sm max-w-3xl">
 
             <form method="POST" action="{{ route('inventory.store') }}">

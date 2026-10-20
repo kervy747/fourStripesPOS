@@ -3,10 +3,10 @@
     {{-- PAGE HEADER --}}
     <x-page-header title="Add User" subtitle="Create a new admin or staff account" />
 
-    <main class="p-6 flex-1">
+    <main class="p-6 flex-1 flex items-center justify-center">
 
         {{-- USER FORM --}}
-        <form method="POST" action="{{ route('users.store') }}" class="bg-neutral-0 rounded-xl p-6 shadow-sm max-w-3xl space-y-4">
+        <form method="POST" action="{{ route('users.store') }}" class="bg-neutral-0 rounded-xl p-6 shadow-sm max-w-4xl space-y-4">
             @csrf
 
             @include('admin.users._form', ['user' => null])

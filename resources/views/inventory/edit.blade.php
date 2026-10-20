@@ -2,7 +2,7 @@
 
     <x-page-header title="Edit Item" subtitle="Update product details" />
 
-    <main class="p-6 flex-1">
+    <main class="p-6 flex-1  flex items-center justify-center">
         <div class="bg-neutral-0 rounded-xl p-6 shadow-sm max-w-3xl">
 
             <form method="POST" action="{{ route('inventory.update', $product->id) }}">
