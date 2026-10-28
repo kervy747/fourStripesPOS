@@ -11,6 +11,7 @@ use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\CustomerController;
 
 // ROOT REDIRECT
 Route::get('/', function () {
@@ -50,6 +51,9 @@ Route::middleware('auth')->group(function () {
     // SALES TRACKING
     Route::get('/sales', [SalesController::class, 'index'])->name('sales.index');
     Route::patch('/sales/{sale}/complete', [SalesController::class, 'markCompleted'])->name('sales.complete');
+
+    //CUSTOMER MANAGEMENT
+    Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
 
     // REPORTS (SHARED - ADMIN & STAFF)
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
