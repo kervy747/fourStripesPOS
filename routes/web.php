@@ -53,7 +53,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/sales/{sale}/complete', [SalesController::class, 'markCompleted'])->name('sales.complete');
 
     //CUSTOMER MANAGEMENT
-    Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+    Route::get('/customers', [CustomerController::class, 'index'])->name('customer.index');
+    Route::get('/customers/{customer}', [CustomerController::class, 'show'])->name('customer.show');
 
     // REPORTS (SHARED - ADMIN & STAFF)
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');

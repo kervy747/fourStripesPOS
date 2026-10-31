@@ -78,7 +78,6 @@
                                 <img src="{{ asset('images/icons/grey-person.svg') }}" class="w-4 h-4" alt="">
                             </x-slot:icon>
                         </x-input>
-                        <x-error name="email" />
                     </div>
 
                     {{-- PASSWORD FIELD --}}
@@ -127,6 +126,7 @@
                             </button>
 
                         </div>
+                        <x-error name="email" />
                         <x-error name="password" />
                     </div>
 
