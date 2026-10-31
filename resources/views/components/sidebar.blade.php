@@ -41,7 +41,7 @@
         </a>
 
         {{-- CUSTOMER MANAGEMENT --}}
-        <a href="{{ route('customers.index') }}"
+        <a href="{{ route('customer.index') }}"
            class="flex items-center gap-3 px-4 py-3 rounded-lg {{ $active === 'customers' ? 'bg-brand-yellow text-brand-black font-semibold' : 'text-neutral-200 hover:bg-neutral-900' }}">
             <img src="{{ asset('images/icons/' . ($active === 'customers' ? 'black-customers.svg' : 'white-customers.svg')) }}" class="w-5 h-5" alt="">
             Customer Management
