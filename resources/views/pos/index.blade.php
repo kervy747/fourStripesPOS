@@ -132,14 +132,14 @@
                         {{-- CUSTOMER NOT FOUND --}}
                         @if(session('customer_not_found'))
                             <div class="mt-2 bg-warning-tint text-warning text-xs font-semibold px-3 py-2 rounded-lg">
-                                No customers found matching that name. You can still continue — a new customer will be created at checkout.
+                                No customer found with that name. A new customer record will be created on checkout.
                             </div>
                         @endif
 
-                        {{-- MATCHED CUSTOMERS --}}
-                        @if(!$selectedCustomerId && count($customerMatches) > 0)
-                            <div class="mt-3">
-                                <div class="text-xs font-medium text-neutral-700">Matching Customers</div>
+                        {{-- CUSTOMER MATCH LIST --}}
+                        @if(!empty($customerMatches))
+                            <div class="mt-2">
+                                <p class="text-xs text-neutral-500 mb-1">Select a matching customer:</p>
                                 <div class="mt-2 flex border bg-neutral-200 border-neutral-200 rounded-lg mb-2 max-h-32 overflow-y-auto p-1 gap-2">
                                     @foreach($customerMatches as $match)
                                         <button type="submit" form="cart-form" name="select_customer" formaction="{{ route('pos.customer.update') }}" value="{{ $match['id'] }}"
@@ -179,27 +179,18 @@
                         class="px-4 py-2 rounded-lg text-sm font-semibold {{ request('category') === 'machines' ? 'bg-brand-yellow text-brand-black' : 'bg-neutral-0 text-neutral-700' }}">
                             Machines
                         </a>
-                        <a href="{{ route('pos.index', ['category' => 'accessories', 'search' => request('search')]) }}"
-                        class="px-4 py-2 rounded-lg text-sm font-semibold {{ request('category') === 'accessories' ? 'bg-brand-yellow text-brand-black' : 'bg-neutral-0 text-neutral-700' }}">
-                            Accessories
-                        </a>
                         <a href="{{ route('pos.index', ['category' => 'tools', 'search' => request('search')]) }}"
                         class="px-4 py-2 rounded-lg text-sm font-semibold {{ request('category') === 'tools' ? 'bg-brand-yellow text-brand-black' : 'bg-neutral-0 text-neutral-700' }}">
                             Tools
                         </a>
+                        <a href="{{ route('pos.index', ['category' => 'accessories', 'search' => request('search')]) }}"
+                        class="px-4 py-2 rounded-lg text-sm font-semibold {{ request('category') === 'accessories' ? 'bg-brand-yellow text-brand-black' : 'bg-neutral-0 text-neutral-700' }}">
+                            Accessories
+                        </a>
                     </div>
 
-                    {{-- CUSTOMER REQUIRED NOTICE --}}
-                    @php $customerReady = $selectedCustomerId || trim($customerName) !== ''; @endphp
-
-                    @unless($customerReady)
-                        <div class="bg-warning-tint text-warning text-xs font-semibold px-4 py-3 rounded-lg mb-3">
-                            Enter a customer name and click <span class="underline">Find</span> before adding products.
-                        </div>
-                    @endunless
-
                     {{-- PRODUCT LIST --}}
-                    <div class="bg-neutral-0 rounded-xl shadow-[0_0_1px_0px_black] overflow-hidden {{ !$customerReady ? 'opacity-50' : '' }}">
+                    <div class="bg-neutral-0 rounded-xl shadow-[0_0_1px_0px_black] overflow-hidden">
 
                         {{-- HEADER --}}
                         <div class="flex items-center justify-between px-4 py-3 bg-white border-b border-neutral-200 text-xs font-semibold text-neutral-500">
@@ -216,18 +207,16 @@
 
                         {{-- PRODUCTS --}}
                         @forelse($products as $product)
-                            <form class="product-add-form" method="POST" action="{{ route('pos.add', $product) }}">
+                            <form method="POST" action="{{ route('pos.add', $product) }}">
                                 @csrf
                                 <input type="hidden" name="customer_name"    value="{{ $customerName }}">
                                 <input type="hidden" name="customer_phone"   value="{{ $customerPhone }}">
                                 <input type="hidden" name="customer_address" value="{{ $customerAddress }}">
                                 <input type="hidden" name="cash_received"    value="{{ $cashReceived }}">
 
-                                @php $productDisabled = $product->quantity == 0 || !$customerReady; @endphp
-
                                 <button type="submit"
-                                    @if($productDisabled) disabled @endif
-                                    class="w-full flex items-center justify-between px-4 py-3 border-b border-neutral-100 text-left {{ $productDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-neutral-100' }}">
+                                    @if($product->quantity == 0) disabled @endif
+                                    class="w-full flex items-center justify-between px-4 py-3 border-b border-neutral-100 text-left {{ $product->quantity == 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-neutral-100' }}">
 
                                     <div class="flex items-center gap-4">
                                         <span class="text-xs text-neutral-500 w-16">
@@ -257,7 +246,6 @@
                                                 {{ $product->quantity }} in stock
                                             </span>
                                         @endif
-
                                     </div>
 
                                 </button>
@@ -269,29 +257,80 @@
                         @endforelse
 
                     </div>
-
-                    {{-- SYNC VISIBLE CUSTOMER FIELDS INTO PRODUCT FORM HIDDEN INPUTS --}}
-                    <script>
-                        document.querySelectorAll('.product-add-form').forEach(function (form) {
-                            form.addEventListener('submit', function () {
-                                var visibleName    = document.querySelector('input[name="customer_name"][form="cart-form"]');
-                                var visiblePhone   = document.querySelector('input[name="customer_phone"][form="cart-form"]');
-                                var visibleAddress = document.querySelector('input[name="customer_address"][form="cart-form"]');
-                                var visibleCash    = document.getElementById('cash_received');
-
-                                if (visibleName)    form.querySelector('input[name="customer_name"]').value    = visibleName.value;
-                                if (visiblePhone)   form.querySelector('input[name="customer_phone"]').value   = visiblePhone.value;
-                                if (visibleAddress) form.querySelector('input[name="customer_address"]').value = visibleAddress.value;
-                                if (visibleCash)    form.querySelector('input[name="cash_received"]').value    = visibleCash.value;
-                            });
-                        });
-                    </script>
-
                 </div>
 
                 {{-- PAGINATION (DEFAULT LARAVEL TAILWIND STYLE) --}}
                 <div class="mt-4">
                     {{ $products->links() }}
+                </div>
+
+                {{-- TOP PRODUCTS THIS MONTH --}}
+                <div class="bg-neutral-0 rounded-xl shadow-sm p-4 mb-4 mt-4">
+                    <div class="text-md font-semibold text-brand-black mb-3">
+                        Top Products This Month
+                    </div>
+
+                    @if($topProducts->isEmpty())
+                        <p class="text-sm text-neutral-500">No sales recorded yet this month.</p>
+                    @else
+                        <div class="rounded-xl shadow-[0_0_1px_0px_black] overflow-hidden">
+
+                            {{-- HEADER --}}
+                            <div class="flex items-center justify-between px-4 py-3 bg-white border-b border-neutral-200 text-xs font-semibold text-neutral-500">
+                                <span>Product Name</span>
+                                <span>Units Sold</span>
+                            </div>
+
+                            {{-- ROWS --}}
+                            @foreach($topProducts as $index => $item)
+                                <div class="flex items-center justify-between px-4 py-3 border-b border-neutral-100 bg-white">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xs font-bold text-neutral-400 w-4">{{ $index + 1 }}</span>
+                                        <span class="text-sm font-semibold text-neutral-900">{{ $item->item_name }}</span>
+                                    </div>
+                                    <span class="text-sm font-bold text-brand-yellow-deep">{{ $item->total_sold }} sold</span>
+                                </div>
+                            @endforeach
+
+                        </div>
+                    @endif
+                </div>
+
+                {{-- OUT OF STOCK ITEMS --}}
+                <div class="bg-neutral-0 rounded-xl shadow-sm p-4 mb-4">
+                    <div class="text-md font-semibold text-brand-black mb-3">
+                        Out of Stock Items
+                    </div>
+
+                    @if($outOfStockProducts->isEmpty())
+                        <div class="flex items-center gap-2 bg-success-tint text-success text-sm font-semibold px-4 py-3 rounded-lg">
+                            <span>All items are currently in stock.</span>
+                        </div>
+                    @else
+                        <div class="rounded-xl shadow-[0_0_1px_0px_black] overflow-hidden">
+
+                            {{-- HEADER --}}
+                            <div class="flex items-center justify-between px-4 py-3 bg-white border-b border-neutral-200 text-xs font-semibold text-neutral-500">
+                                <div class="flex items-center gap-4">
+                                    <span class="w-16">Item Code</span>
+                                    <span>Product Name</span>
+                                </div>
+                                <span>Category</span>
+                            </div>
+
+                            {{-- ROWS --}}
+                            @foreach($outOfStockProducts as $product)
+                                <div class="flex items-center justify-between px-4 py-3 border-b border-neutral-100 bg-white">
+                                    <div class="flex items-center gap-4">
+                                        <span class="text-xs text-neutral-500 w-16">{{ $product->item_code }}</span>
+                                        <span class="text-sm font-semibold text-neutral-900">{{ $product->name }}</span>
+                                    </div>
+                                    <span class="text-xs font-semibold text-neutral-500 capitalize">{{ $product->category }}</span>
+                                </div>
+                            @endforeach
+
+                        </div>
+                    @endif
                 </div>
 
             </div>
@@ -302,4 +341,4 @@
 
     </main>
 
-</x-layout>
+</x-layout>np2
