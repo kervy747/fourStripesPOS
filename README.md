@@ -155,6 +155,9 @@ FourStripesPOS/
 │       │   ├── edit.blade.php
 │       │   └── form.blade.php
 │       │
+│       ├── customer/
+│       │   ├── index.blade.php
+│       │
 │       ├── sales/
 │       │   ├── index.blade.php
 │       │
